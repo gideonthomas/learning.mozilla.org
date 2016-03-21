@@ -1,14 +1,14 @@
 var React = require('react'),
-  HeroUnit = require('../components/hero-unit.jsx'),
-  IconLinks = require('../components/icon-links.jsx'),
-  IconLink = require('../components/icon-link.jsx'),
-  BadgeVerticalIcon = require('../components/badge-vertical-icon.jsx'),
-  urlize = require('urlize').urlize,
-  Link = require('react-router').Link,
-  BadgesAPI = require('../lib/badges-api'),
-  TeachAPI = require('../lib/teach-api'),
-  LoginLink = require('../components/login/LoginLink.jsx'),
-  Divider = require('../components/Divider.jsx');
+    HeroUnit = require('../components/hero-unit.jsx'),
+    IconLinks = require('../components/icon-links.jsx'),
+    IconLink = require('../components/icon-link.jsx'),
+    BadgeVerticalIcon = require('../components/badge-vertical-icon.jsx'),
+    urlize = require('urlize').urlize,
+    Link = require('react-router').Link,
+    BadgesAPI = require('../lib/badges-api'),
+    TeachAPI = require('../lib/teach-api'),
+    LoginLink = require('../components/login/LoginLink.jsx'),
+    Divider = require('../components/Divider.jsx');
 
 var BadgesPage = React.createClass({
   statics: {
@@ -40,23 +40,30 @@ var BadgesPage = React.createClass({
     }
 
     if (response.status === 200 && response.body && response.body.data && response.body.data.length) {
-      data = Array.from(response.body.data).map(function (badgeData) {
-        return {
-          'title': badgeData.title || '',
-          'status': 'Achieved',
-          'description': badgeData.short_description || '',
-          'icon': badgeData.image_url || '',
-          'icon2x': badgeData.image_url || '',
-          'id': badgeData.id,
+      data = Array.from(response.body.data).map(function (badge) {
+        var interpreted = {
+          'title': badge.title,
+          'description': badge.short_description || '',
+          'icon': badge.image_url,
+          'icon2x': badge.image_url,
+          'id': badge.id,
         };
+
+        if (badge.is_claimable || badge.is_giveable) {
+          interpreted.status = "unclaimed";
+        } else {
+          interpreted.status = "reserved";
+        }
+
+        return interpreted;
       });
     }
 
     return data;
   },
   formLoginBlock: function() {
-    if (this.state.teachAPI.getUsername()) return null;
- 
+    if (this.state.teachAPI.getLoginInfo() !== null) return null;
+
     return (
       <div className="signinblock" style={{ marginTop: '4em' }}>
         <Divider className="badges"/>
@@ -71,29 +78,21 @@ var BadgesPage = React.createClass({
     );
   },
   render: function () {
-    var linkUrl = "",
-      badgesView = '',
-      loginComponent = "";
+    var badgesView = null,
+        loginComponent = this.formLoginBlock();
 
-    // TODO:FIXME: make conditional on whether or not a user is logged in
-
-    var badgesView = this.state.badges.map(function (badge) {
-      linkUrl = '/badge/' + badge.id + '/' + urlize(badge.title);
-      return (
-        <div key={badge.id} className="col-md-4">
-          <Link to={ linkUrl } className={'badge-icon-link'}>
-            <BadgeVerticalIcon
-              id={badge.id}
-              icon={badge.icon}
-              icon2x={badge.icon2x}
-              title={badge.title}
-              status={badge.status}
-              alt={badge.title}
-              description={badge.description}/>
-          </Link>
-        </div>
-      );
-    });
+    if (!loginComponent) {
+      badgesView = this.state.badges.map(function (badge) {
+        var linkUrl = '/badge/' + badge.id + '/' + urlize(badge.title);
+        return (
+          <div key={badge.id} className="col-md-4">
+            <Link to={ linkUrl } className={'badge-icon-link'}>
+              <BadgeVerticalIcon badge={badge} />
+            </Link>
+          </div>
+        );
+      });
+    }
 
     return (
       <div>
@@ -126,7 +125,7 @@ var BadgesPage = React.createClass({
           </section>
         </HeroUnit>
 
-        { this.formLoginBlock() }
+        { loginComponent }
 
         <div className="inner-container badges-content">
           <section>
@@ -138,7 +137,7 @@ var BadgesPage = React.createClass({
 
             <div className="sep-16"></div>
             <div className="row">
-              { badgesView }
+            { badgesView }
             </div>
           </section>
         </div>
