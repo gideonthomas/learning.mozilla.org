@@ -22,10 +22,13 @@ var BadgesPage = React.createClass({
     };
   },
   componentDidMount: function () {
-    var BadgesInterface = new BadgesAPI();
+    var BadgesInterface = new BadgesAPI({
+      teachAPI: this.state.teachAPI
+    });
     BadgesInterface.listBadges(this.setBadgesData);
   },
   setBadgesData: function (err, data) {
+    console.log(data);
     this.setState({
       badges: this.parseBadges(err, data)
     });
@@ -48,6 +51,8 @@ var BadgesPage = React.createClass({
           'icon2x': badge.image_url,
           'id': badge.id,
         };
+
+        console.log(badge);
 
         if (badge.is_claimable || badge.is_giveable) {
           interpreted.status = "unclaimed";
