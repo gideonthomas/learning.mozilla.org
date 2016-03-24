@@ -28,41 +28,47 @@ var BadgesPage = React.createClass({
     BadgesInterface.listBadges(this.setBadgesData);
   },
   setBadgesData: function (err, data) {
-    console.log(data);
     this.setState({
       badges: this.parseBadges(err, data)
     });
   },
   parseBadges: function (err, response) {
+
     // do parsing here
     var data = [];
+    var earned = response.earned || [];
+    var noUser = (this.state.teachAPI.getLoginInfo() === null);
 
     if (err) {
       console.error(err);
       return data;
     }
 
-    if (response.status === 200 && response.body && response.body.data && response.body.data.length) {
-      data = Array.from(response.body.data).map(function (badge) {
-        var interpreted = {
-          'title': badge.title,
-          'description': badge.short_description || '',
-          'icon': badge.image_url,
-          'icon2x': badge.image_url,
-          'id': badge.id,
-        };
+    console.log(response.badges);
 
-        console.log(badge);
+    data = response.badges.map(function (badge) {
+      var interpreted = {
+        'title': badge.title,
+        'description': badge.short_description || '',
+        'icon': badge.image_url,
+        'icon2x': badge.image_url,
+        'id': badge.id,
+      };
 
-        if (badge.is_claimable || badge.is_giveable) {
-          interpreted.status = "unclaimed";
-        } else {
-          interpreted.status = "reserved";
-        }
+      if (badge.is_claimable || badge.is_giveable) {
+        interpreted.status = "unclaimed";
+      } else {
+        interpreted.status = "reserved";
+      }
 
-        return interpreted;
-      });
-    }
+      if (noUser) {
+        interpreted.status = "available";
+      } else if (earned.indexOf(badge.id) !== -1) {
+        interpreted.status = "achieved";
+      }
+
+      return interpreted;
+    });
 
     return data;
   },
@@ -83,21 +89,18 @@ var BadgesPage = React.createClass({
     );
   },
   render: function () {
-    var badgesView = null,
-        loginComponent = this.formLoginBlock();
+    var loginComponent = this.formLoginBlock();
 
-    if (!loginComponent) {
-      badgesView = this.state.badges.map(function (badge) {
-        var linkUrl = '/badge/' + badge.id + '/' + urlize(badge.title);
-        return (
-          <div key={badge.id} className="col-md-4">
-            <Link to={ linkUrl } className={'badge-icon-link'}>
-              <BadgeVerticalIcon badge={badge} />
-            </Link>
-          </div>
-        );
-      });
-    }
+    var badgesView = this.state.badges.map(function (badge) {
+      var linkUrl = '/badge/' + badge.id + '/' + urlize(badge.title);
+      return (
+        <div key={badge.id} className="col-md-4">
+          <Link to={ linkUrl } className={'badge-icon-link'}>
+            <BadgeVerticalIcon badge={badge} />
+          </Link>
+        </div>
+      );
+    });
 
     return (
       <div>

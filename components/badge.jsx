@@ -18,6 +18,7 @@ var Badge = React.createClass({
     }
 
     var statusIcons = {
+      available: 'fa-thumbs-up',
       pending : 'fa-clock-o',
       achieved: 'fa-check',
       eligible: 'fa-pencil',
