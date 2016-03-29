@@ -15,9 +15,6 @@ var LoginLink = React.createClass({
     loginBaseURL: React.PropTypes.string,
     callbackURL: React.PropTypes.string
   },
-  contextTypes: {
-    history: React.PropTypes.object
-  },
   getDefaultProps: function() {
     return {
       origin: config.ORIGIN,

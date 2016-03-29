@@ -17,8 +17,8 @@ var BadgesPage = React.createClass({
   },
   getInitialState: function() {
     return {
-      'badges' : [],
-      'teachAPI' : this.props.teachAPI || new TeachAPI()
+      badges: [],
+      teachAPI: this.props.teachAPI || new TeachAPI()
     };
   },
   componentDidMount: function () {

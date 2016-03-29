@@ -21,6 +21,10 @@ var Page = React.createClass({
     }
   },
 
+  contextTypes: {
+    history: React.PropTypes.object
+  },
+
   // Utility functions
   getCurrentPageHandler: function() {
     var routes = this.props.routes;
@@ -114,6 +118,12 @@ var Page = React.createClass({
     var routes = this.props.routes;
     var currentRoute = routes.slice(-1)[0];
     var currentPath = config.ORIGIN + '/' + (currentRoute.path || '');
+
+    // window.location is a higher authority for login callback purposes, when available:
+    if (typeof window !== 'undefined') {
+      currentPath = window.location.toString();
+    }
+
     var pageClassName = this.getCurrentClassName();
     var className = "page container-fluid " + pageClassName;
 
