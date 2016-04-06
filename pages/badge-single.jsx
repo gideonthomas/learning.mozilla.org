@@ -151,6 +151,8 @@ var BadgePage = React.createClass({
   renderApplicationForm: function() {
     return (
       <div className="apply-send-qualifications">
+      {
+        /*
         <p><strong className={'text-bold'}>Ideas?</strong> You could submit a blog post, a project you made
           using Mozilla's tools, or another web creation you made. Demonstrate your understanding in your
           own unique way!</p>
@@ -181,8 +183,23 @@ var BadgePage = React.createClass({
             <button type="submit" className="btn btn-awsm">Apply</button>
           </div>
         </form>
+        */
+       }
+       <button onClick={this.claimBadge}>try claim</button>
       </div>
     );
+  },
+
+  claimBadge: function() {
+    this.state.badgeAPI.claimBadge(this.state.badge.id, {
+      evidences: [
+        "http://imgur.com/gallery/uqUjRPd"
+      ]
+    }, this.handleClaimRequest);
+  },
+
+  handleClaimRequest: function(err, data) {
+    console.log(data)
   }
 });
 
