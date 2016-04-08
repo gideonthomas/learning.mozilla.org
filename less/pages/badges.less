@@ -127,11 +127,12 @@
   }
 }
 
-.single-badge-page-navigation{
-  padding:  0 0 @padding-large-horizontal * 2 0;
+.individual-badge .badge-navigation {
+  display: flex;
+  justify-content: space-between;
 
   .next,
-  .prev{
+  .previous {
     .icon{
       display: inline-block;
       max-width: 100px;
@@ -153,11 +154,17 @@
     .text{
       margin-right: @padding-base-horizontal;
     }
+    img {
+      width: 100px;
+    }
   }
 
-  .prev{
+  .previous {
     .text{
       margin-left: @padding-base-horizontal;
+    }
+    img {
+      width: 100px;
     }
   }
 }

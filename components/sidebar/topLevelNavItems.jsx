@@ -45,6 +45,13 @@ var MENU_ENTRIES = [
     ]
   },
   {
+    name: "Credentials",
+    to: '/badges',
+    icon: "/img/components/sidebar/svg/icon-nav-tools.svg",
+    className: "badge-page"
+    // FIXME: TODO: we need to give this its own icon
+  },
+  {
     name: "Tools",
     to: '/tools',
     icon: "/img/components/sidebar/svg/icon-nav-tools.svg",

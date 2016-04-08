@@ -27,21 +27,23 @@ var BadgesPage = React.createClass({
   },
 
   toggleAccess: function(err, result) {
-    // We need to inform the user that they'll have to log into credly
-    // (through us) if the TeachAPI has no access token for them.
     result = result || { access: false };
-    //this.setState({ hasAccess: result.access });
+    this.setState({
+      hasAccess: result.access
+    });
   },
 
   componentDidMount: function () {
     var badgeAPI = new BadgesAPI({ teachAPI: this.state.teachAPI });
     this.setState({ badgeAPI: badgeAPI });
 
-    // is the user a known credly user?
-    badgeAPI.hasAccess(this.toggleAccess);
-
-    // list all available MLN badges
+    // steo 1: retrieve the list of all available MLN badges
     badgeAPI.listBadges(this.setBadgesData);
+
+    // we're also interested in whether this user is credly-authenticated
+    badgeAPI.hasAccess(this.toggleAccess, function(err, data) {
+      if (err) return console.error("not logged into credly");
+    });
   },
 
   setBadgesData: function (err, data) {
@@ -55,14 +57,13 @@ var BadgesPage = React.createClass({
     // do parsing here
     var data = [];
     var earned = response.earned || [];
+    var pending = response.pending || [];
     var noUser = (this.state.teachAPI.getLoginInfo() === null);
 
     if (err) {
       console.error(err);
       return data;
     }
-
-    console.log(response.badges);
 
     data = response.badges.map(function (badge) {
       var interpreted = {
@@ -73,16 +74,14 @@ var BadgesPage = React.createClass({
         'id': badge.id,
       };
 
-      if (badge.is_claimable || badge.is_giveable) {
-        interpreted.status = "unclaimed";
-      } else {
-        interpreted.status = "reserved";
-      }
-
       if (noUser) {
-        interpreted.status = "available";
+        interpreted.status = false;
       } else if (earned.indexOf(badge.id) !== -1) {
         interpreted.status = "achieved";
+      } else if (pending.indexOf(badge.id) !== -1) {
+        interpreted.status = "pending";
+      } else {
+        interpreted.status = "eligible";
       }
 
       return interpreted;
@@ -91,58 +90,10 @@ var BadgesPage = React.createClass({
     return data;
   },
 
-  formLoginBlock: function() {
-    if (this.state.teachAPI.getLoginInfo() !== null) return null;
-
-    return (
-      <div className="signinblock" style={{ marginTop: '4em' }}>
-        <Divider className="badges"/>
-
-        <div className={'text-center login-cta'}>
-          <span className={'login-text'}>To start earning badges, you will have to sign in.</span>
-          <LoginLink className="btn btn-awsm" loginBaseURL={this.state.teachAPI.baseURL} callbackURL={this.props.currentPath}>Sign in</LoginLink>
-        </div>
-
-        <Divider className="badges"/>
-      </div>
-    );
-  },
-
-  handleCredlyLogin: function(email, password) {
-    this.state.badgeAPI.ensureLogin(email, password);
-  },
-
-  formCredlyLoginBlock: function() {
-    if (this.state.hasAccess) return null;
-
-    return (
-      <div className="signinblock" style={{ marginTop: '4em' }}>
-        <Divider className="badges"/>
-
-        <div className={'text-center login-cta'}>
-          <span className={'login-text'}>It looks like we do not have a Credly token for you yet. Link us to your Credly account, or sign up for one, to start earning badges!</span>
-          <CredlyLoginLink doLogin={this.handleCredlyLogin}>Tell Credly you want to earn badges with us</CredlyLoginLink>
-        </div>
-
-        <Divider className="badges"/>
-      </div>
-    );
-  },
-
   render: function () {
-    var loginComponent = this.formLoginBlock();
-    var credlyLoginComponent = this.formCredlyLoginBlock();
 
-    var badgesView = this.state.badges.map(function (badge) {
-      var linkUrl = '/badge/' + badge.id + '/' + urlize(badge.title);
-      return (
-        <div key={badge.id} className="col-md-4">
-          <Link to={ linkUrl } className={'badge-icon-link'}>
-            <BadgeVerticalIcon badge={badge} />
-          </Link>
-        </div>
-      );
-    });
+    var loginComponent = this.formLoginBlock();
+    var credlyLoginComponent = null; //this.formCredlyLoginBlock();
 
     return (
       <div>
@@ -188,12 +139,64 @@ var BadgesPage = React.createClass({
 
             <div className="sep-16"></div>
             <div className="row">
-            { badgesView }
+            { this.generateBadgeList() }
             </div>
           </section>
         </div>
       </div>
     );
+  },
+
+  formLoginBlock: function() {
+    if (this.state.teachAPI.getLoginInfo() !== null) return null;
+
+    return (
+      <div className="signinblock" style={{ marginTop: '4em' }}>
+        <Divider className="badges"/>
+
+        <div className={'text-center login-cta'}>
+          <span className={'login-text'}>Sign in to start earning credentials.</span>
+          <LoginLink className="btn btn-awsm" loginBaseURL={this.state.teachAPI.baseURL} callbackURL={this.props.currentPath}>Sign in</LoginLink>
+        </div>
+
+        <Divider className="badges"/>
+      </div>
+    );
+  },
+
+  handleCredlyLogin: function(email, password) {
+    this.state.badgeAPI.ensureLogin(email, password);
+  },
+
+  formCredlyLoginBlock: function() {
+    if (this.state.hasAccess) return null;
+
+    return (
+      <div className="signinblock" style={{ marginTop: '4em' }}>
+        <Divider className="badges"/>
+        <div className={'text-center login-cta'}>
+          <span className={'login-text'}>It looks like we do not have a Credly token for you yet. Link us to your Credly account, or sign up for one, to start earning badges!</span>
+          <CredlyLoginLink doLogin={this.handleCredlyLogin}>Tell Credly you want to earn badges with us</CredlyLoginLink>
+        </div>
+        <Divider className="badges"/>
+      </div>
+    );
+  },
+
+  generateBadgeList: function() {
+    var anonymous = !this.state.teachAPI.getLoginInfo();
+
+    return this.state.badges.map(function (badge) {
+      var linkUrl = '/badge/' + badge.id + '/' + urlize(badge.title);
+      return (
+        <div key={badge.id} className="col-md-4">
+          <Link to={ linkUrl } className={'badge-icon-link'}>
+            <BadgeVerticalIcon badge={badge} anonymous={anonymous} />
+          </Link>
+        </div>
+      );
+    });
   }
+
 });
 module.exports = BadgesPage;

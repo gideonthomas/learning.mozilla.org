@@ -10,16 +10,7 @@ var getStatus = function(statusVal) {
     statusVal = statusVal.toLowerCase();
   }
 
-  var statusIcons = {
-    available: 'fa-thumbs-up',
-    pending : 'fa-clock-o',
-    achieved: 'fa-check',
-    eligible: 'fa-pencil',
-    unclaimed: 'fa-check-circle',
-    reserved: 'fa-exclamation-triangle'
-  };
-
-  var statusClasses = classnames('fa', 'fa-fw', statusIcons[statusVal]);
+  var statusClasses = classnames('fa', 'fa-fw', Badge.statusIcons[statusVal]);
   var statusIcon = <i className={statusClasses} />;
   var classNames = 'label label-default ' + statusVal;
 
@@ -32,10 +23,25 @@ var getStatus = function(statusVal) {
   );
 };
 
+
 var Badge = React.createClass({
+  statics: {
+    available: 'available',
+    pending : 'pending',
+    achieved: 'achieved',
+    eligible: 'eligible',
+    statusIcons: {
+      available: 'fa-thumbs-up',
+      pending : 'fa-clock-o',
+      achieved: 'fa-check',
+      eligible: 'fa-pencil'
+    }
+  },
+
   propTypes: {
     badge: React.PropTypes.object.isRequired
   },
+
   render: function () {
     var badge = this.props.badge;
 
@@ -48,7 +54,7 @@ var Badge = React.createClass({
         icon2x = badge.icon2x,
         status = badge.status;
 
-    var statusElement = status ? getStatus(status) : null;
+    var statusElement = status && !this.props.anonymous ? getStatus(status) : null;
 
     return(
       <div className="badge-icon">

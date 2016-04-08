@@ -6,10 +6,14 @@ var BadgeVerticalIcon = React.createClass({
     var badge = this.props.badge;
     return (
       <div className='badge-vertical-icon'>
-        <Badge badge={badge}/>
+        <Badge badge={badge} anonymous={this.props.anonymous}/>
         <div className="badge-text text-center">
-          <div className="title">{badge.title}</div>
-          <div className="description">{badge.description}</div>
+          {
+            this.props.anonymous ? null : [
+              <div key="title" className="title">{badge.title}</div>,
+              <div key="description" className="description">{badge.description}</div>
+            ]
+          }
         </div>
       </div>
     )

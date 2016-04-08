@@ -6,6 +6,7 @@ var React = require('react'),
     RequirementsList = require('../components/requirement-list.jsx'),
     LoginLink = require('../components/login/LoginLink.jsx'),
     Badge = require('../components/badge.jsx'),
+    Divider = require('../components/Divider.jsx'),
     BadgesAPI = require('../lib/badges-api'),
     TeachAPI = require('../lib/teach-api'),
     Link = require('react-router').Link;
@@ -13,16 +14,19 @@ var React = require('react'),
 var Navigation = React.createClass({
   render: function() {
     return (
-      <div>
-        <a href={this.props.prev}>prev</a>,
-        <a href={this.props.next}>next</a>,
-        <a href={this.props.main}>Back to the badge list</a>
+      <div className="badge-navigation">
+        <a className="previous" href={this.props.prev.url}>
+          <img src={this.props.prev.img} />
+          <span clasName="label">← prev</span>
+        </a>
+        <a className="next" href={this.props.next.url}>
+          <span clasName="label">next →</span>
+          <img src={this.props.next.img} />
+        </a>
       </div>
     );
   }
 });
-
-module.exports = Navigation;
 
 /**
  * Single badge Page
@@ -50,29 +54,60 @@ var BadgePage = React.createClass({
         icon: "",
         icon2x: "",
         criteria: []
-      }
+      },
+      prev: false,
+      next: false
     };
   },
+
   componentDidMount: function() {
     this.state.badgeAPI.getBadgeDetails(this.props.params.id, this.handleBadgeData);
   },
+
   handleBadgeData: function(err, data) {
     if (err) {
       return console.error('Error in fetch badge information', err);
     }
     this.parseBadgeDetails(data);
   },
+
   parseBadgeDetails: function(data) {
     var bdata = data.badge;
-    this.setState({ badge: {
-      id: bdata.id,
-      title: bdata.title,
-      description: bdata.description,
-      icon: bdata.image_url,
-      icon2x: bdata.image_url,
-      criteria: (bdata.criteria || '').split(/\r?\n/),
-      status: data.earned? "achieved" : "unclaimed" // FIXME: these need to be constants on the badgeAPI, probably
-    }});
+
+    var prev = false;
+    if (data.prev) {
+      prev = {
+        url: '/badge/' + data.prev.id,
+        img: data.prev.image_url
+      };
+    }
+
+    var next = false;
+    if (data.next) {
+      next = {
+        url: '/badge/' + data.next.id,
+        img: data.next.image_url
+      };
+    }
+
+    // FIXME: these need to be constants on the badgeAPI, probably
+    status = Badge.eligible;
+    if (data.earned) { status = Badge.achieved; }
+    if (data.pending) { status = Badge.pending; }
+
+    this.setState({
+      badge: {
+        id: bdata.id,
+        title: bdata.title,
+        description: bdata.description,
+        icon: bdata.image_url,
+        icon2x: bdata.image_url,
+        criteria: (bdata.criteria || '').split(/\r?\n/),
+        status: status
+      },
+      prev: prev,
+      next: next
+    });
   },
 
   render: function () {
@@ -81,19 +116,24 @@ var BadgePage = React.createClass({
     if (!user) {
       content = this.renderAnonymousView();
     }
-    else if (this.state.badge.status === "achieved") {
+    else if (this.state.badge.status === Badge.achieved) {
       content = this.renderAchieved();
     }
-    else if (this.state.badge.status === "pending") {
+    else if (this.state.badge.status === Badge.pending) {
       content = this.renderPending();
     } else {
-      content = this.renderAvailable();
+      content = this.renderEligible();
     }
+
     return (
       <div className="individual-badge">
+        <div>
+          <a href="/badges">← back to credentials</a>
+        </div>
         <BadgeHorizontalIcon badge={this.state.badge} />
         { content }
-        <Navigation prev={this.props.prev} next={this.props.next} main={'/badges'} />
+        <Divider />
+        <Navigation prev={this.state.prev} next={this.state.next} />
       </div>
     );
   },
@@ -127,7 +167,26 @@ var BadgePage = React.createClass({
     );
   },
 
-  renderAvailable: function() {
+  renderPending: function() {
+    var badgeCriteria = this.formBadgeCriteria(this.state.badge.criteria);
+    return (
+      <div className="badge-pending">
+        <h3 className={'text-light'}>Your badge claim is pending.</h3>
+        <SocialShare />
+        <div className="badge-reward-text">
+          <div className="date">
+            DATE FROM API (although we may not end up using this);
+          </div>
+          <div className="qualifications">
+            EVIDENCE FOR THIS BADGE, FROM API (although we may not end up using this)
+          </div>
+        </div>
+      </div>
+    );
+  },
+
+
+  renderEligible: function() {
     var badgeCriteria = this.formBadgeCriteria(this.state.badge.criteria);
     return (
       <div className="badge-available">
@@ -185,7 +244,7 @@ var BadgePage = React.createClass({
         </form>
         */
        }
-       <button onClick={this.claimBadge}>try claim</button>
+       <button type="submit" className="btn btn-awsm" onClick={this.claimBadge}>Apply</button>
       </div>
     );
   },
@@ -193,13 +252,16 @@ var BadgePage = React.createClass({
   claimBadge: function() {
     this.state.badgeAPI.claimBadge(this.state.badge.id, {
       evidences: [
-        "http://imgur.com/gallery/uqUjRPd"
+        {
+          file: "http://imgur.com/gallery/uqUjRPd",
+          name: "image link"
+        }
       ]
     }, this.handleClaimRequest);
   },
 
   handleClaimRequest: function(err, data) {
-    console.log(data)
+    console.log(err, data)
   }
 });
 
