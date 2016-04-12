@@ -78,7 +78,7 @@ var BadgePage = React.createClass({
     this.state.badgeAPI.getBadgeDetails(this.props.params.id, this.handleBadgeData);
 
     // we're also interested in whether this user is credly-authenticated
-    badgeAPI.hasAccess(this.toggleAccess, function(err, data) {
+    this.state.badgeAPI.hasAccess(this.toggleAccess, function(err, data) {
       if (err) return console.error("not logged into credly");
     });
   },
@@ -142,12 +142,7 @@ var BadgePage = React.createClass({
       content = this.renderAnonymousView();
     }
     else if (!this.state.hasAccess) {
-      content = (
-        <div>
-          { this.renderAnonymousView() }
-          <p>It looks like we have no Credly access token for you yet. Click here to link up your Credly account.</p>
-        </div>
-      );
+      content = this.renderNeedCredlyLinked();
     }
     else if (this.state.badge.status === Badge.achieved) {
       content = this.renderAchieved();
@@ -181,6 +176,16 @@ var BadgePage = React.createClass({
           <p>You need to be signed in before you can earn badges.</p>
 
           <LoginLink className="btn btn-awsm" loginBaseURL={this.state.teachAPI.baseURL} callbackURL={this.props.currentPath}>Sign in</LoginLink>
+      </div>
+    );
+  },
+
+  renderNeedCredlyLinked: function() {
+    return (
+      <div>
+        <Divider/>
+        <p>It looks like we have no Credly access token for you yet. Click  to link up your Credly account:</p>
+        <button className="btn btn-awsm">Link up with Credly</button>
       </div>
     );
   },
