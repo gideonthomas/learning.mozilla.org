@@ -189,6 +189,16 @@ var BadgesPage = React.createClass({
   generateBadgeList: function() {
     var anonymous = !this.state.teachAPI.getLoginInfo();
 
+    if (this.state.badges.length === 0) {
+      return (
+        <div>
+          <Divider/>
+          <div style={{textAlign: 'center'}}>Loading badges...</div>
+          <Divider/>
+        </div>
+      );
+    }
+
     return this.state.badges.map(function (badge) {
       var linkUrl = '/badge/' + badge.id + '/' + urlize(badge.title);
       return (

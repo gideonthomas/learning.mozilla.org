@@ -126,6 +126,9 @@ var BadgePage = React.createClass({
     if (!user) {
       content = this.renderAnonymousView();
     }
+    else if (!this.state.badge.id) {
+      content = this.renderLoadingView();
+    }
     else if (this.state.badge.status === Badge.achieved) {
       content = this.renderAchieved();
     }
@@ -155,6 +158,15 @@ var BadgePage = React.createClass({
     return (
       <div>
         <LoginLink loginBaseURL={this.state.teachAPI.baseURL} callbackURL={this.props.currentPath}>Sign in</LoginLink><span> to earn this badge!</span>
+      </div>
+    );
+  },
+
+  renderLoadingView: function() {
+    return (
+      <div>
+        <Divider/>
+        <div style={{textAlign: 'center'}}>Loading badge details...</div>
       </div>
     );
   },
