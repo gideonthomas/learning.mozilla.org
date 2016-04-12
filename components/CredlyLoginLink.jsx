@@ -2,7 +2,7 @@ var React = require('react');
 
 var CredlyLoginLink = React.createClass({
 
-  getInitialState() {
+  getInitialState: function() {
     return {
       email: "test@example.org",
       password: ''
@@ -16,6 +16,7 @@ var CredlyLoginLink = React.createClass({
       padding: '0.5em 2em',
       margin: 'auto'
     };
+
     return (
       <div className="credlybox" style={credlyboxstyle}>
         <fieldset>
