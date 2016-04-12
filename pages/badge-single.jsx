@@ -79,8 +79,6 @@ var BadgePage = React.createClass({
   parseBadgeDetails: function(data) {
     var bdata = data.badge;
 
-    console.log(bdata);
-
     var prev = false;
     if (data.prev) {
       prev = {
@@ -109,7 +107,7 @@ var BadgePage = React.createClass({
       badge: {
         id: bdata.id,
         title: bdata.title,
-        description: bdata.description,
+        description: bdata.short_description,
         icon: bdata.image_url,
         icon2x: bdata.image_url,
         criteria: matched,
@@ -123,11 +121,11 @@ var BadgePage = React.createClass({
   render: function () {
     var content = null;
     var user = this.state.teachAPI.getLoginInfo();
-    if (!user) {
-      content = this.renderAnonymousView();
-    }
-    else if (!this.state.badge.id) {
+    if (!this.state.badge.id) {
       content = this.renderLoadingView();
+    }
+    else if (!user) {
+      content = this.renderAnonymousView();
     }
     else if (this.state.badge.status === Badge.achieved) {
       content = this.renderAchieved();
@@ -157,7 +155,10 @@ var BadgePage = React.createClass({
     // FIXME: TODO: hook up login link properly
     return (
       <div>
-        <LoginLink loginBaseURL={this.state.teachAPI.baseURL} callbackURL={this.props.currentPath}>Sign in</LoginLink><span> to earn this badge!</span>
+        <Divider/>
+          <p>You need to be signed in before you can earn badges.</p>
+
+          <LoginLink className="btn btn-awsm" loginBaseURL={this.state.teachAPI.baseURL} callbackURL={this.props.currentPath}>Sign in</LoginLink>
       </div>
     );
   },
@@ -329,8 +330,6 @@ var BadgePage = React.createClass({
     if (evidences.length === 0) {
       return console.error("a badge claim without evidence was attempted");
     }
-
-    console.log(evidences);
 
     this.state.badgeAPI.claimBadge(this.state.badge.id, { evidences: evidences }, this.handleClaimRequest);
   },

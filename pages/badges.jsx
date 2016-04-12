@@ -53,9 +53,6 @@ var BadgesPage = React.createClass({
   },
 
   parseBadges: function (err, response) {
-
-    console.log(response);
-
     // do parsing here
     var data = [];
     var earned = response.earned || [];
