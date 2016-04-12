@@ -7,7 +7,7 @@ var Modal = React.createClass({
   propTypes: {
     modalTitle: React.PropTypes.string,
     showModal: React.PropTypes.func,
-    hidewModal: React.PropTypes.func
+    hideModal: React.PropTypes.func
   },
   componentDidMount: function() {
     document.addEventListener('keydown', this.handleKeyDown);

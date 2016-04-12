@@ -8,7 +8,6 @@ var React = require('react'),
     BadgesAPI = require('../lib/badges-api'),
     TeachAPI = require('../lib/teach-api'),
     LoginLink = require('../components/login/LoginLink.jsx'),
-    CredlyLoginLink = require('../components/CredlyLoginLink.jsx'),
     Divider = require('../components/Divider.jsx');
 
 var BadgesPage = React.createClass({
@@ -91,10 +90,6 @@ var BadgesPage = React.createClass({
   },
 
   render: function () {
-
-    var loginComponent = this.formLoginBlock();
-    var credlyLoginComponent = null; //this.formCredlyLoginBlock();
-
     return (
       <div>
         <HeroUnit>
@@ -126,8 +121,7 @@ var BadgesPage = React.createClass({
           </section>
         </HeroUnit>
 
-        { loginComponent }
-        { credlyLoginComponent }
+        { this.formLoginBlock() }
 
         <div className="inner-container badges-content">
           <section>
@@ -159,25 +153,6 @@ var BadgesPage = React.createClass({
           <LoginLink className="btn btn-awsm" loginBaseURL={this.state.teachAPI.baseURL} callbackURL={this.props.currentPath}>Sign in</LoginLink>
         </div>
 
-        <Divider className="badges"/>
-      </div>
-    );
-  },
-
-  handleCredlyLogin: function(email, password) {
-    this.state.badgeAPI.ensureLogin(email, password);
-  },
-
-  formCredlyLoginBlock: function() {
-    if (this.state.hasAccess) return null;
-
-    return (
-      <div className="signinblock" style={{ marginTop: '4em' }}>
-        <Divider className="badges"/>
-        <div className={'text-center login-cta'}>
-          <span className={'login-text'}>It looks like we do not have a Credly token for you yet. Link us to your Credly account, or sign up for one, to start earning badges!</span>
-          <CredlyLoginLink doLogin={this.handleCredlyLogin}>Tell Credly you want to earn badges with us</CredlyLoginLink>
-        </div>
         <Divider className="badges"/>
       </div>
     );

@@ -9,7 +9,9 @@ var React = require('react'),
     Divider = require('../components/Divider.jsx'),
     BadgesAPI = require('../lib/badges-api'),
     TeachAPI = require('../lib/teach-api'),
-    Link = require('react-router').Link;
+    Link = require('react-router').Link,
+    Modal = require('../components/modal.jsx'),
+    CredlyLinkForm = require('../components/CredlyLinkForm.jsx');
 
 var Navigation = React.createClass({
   render: function() {
@@ -47,6 +49,7 @@ var BadgePage = React.createClass({
     var badgeAPI = new BadgesAPI({ teachAPI: teachAPI });
     return {
       hasAccess: false,
+      showLinkModal: false,
       teachAPI: teachAPI,
       badgeAPI: badgeAPI,
       badge: {
@@ -135,6 +138,10 @@ var BadgePage = React.createClass({
   render: function () {
     var content = null;
     var user = this.state.teachAPI.getLoginInfo();
+
+    // We have quite a lot of different states that each require
+    // we render (sometimes subtly) different content, so we decide
+    // what to render in the following cascade:
     if (!this.state.badge.id) {
       content = this.renderLoadingView();
     }
@@ -153,10 +160,6 @@ var BadgePage = React.createClass({
       content = this.renderEligible();
     }
 
-    // This currently renders as "elligible" until the badge
-    // data actually loads, which means people might see the
-    // wrong state for a few seconds. We want to fix that.
-
     return (
       <div className="individual-badge">
         <div> <a href="/badges">← back to credentials</a> </div>
@@ -169,23 +172,40 @@ var BadgePage = React.createClass({
   },
 
   renderAnonymousView: function() {
-    // FIXME: TODO: hook up login link properly
     return (
       <div>
         <Divider/>
           <p>You need to be signed in before you can earn badges.</p>
-
           <LoginLink className="btn btn-awsm" loginBaseURL={this.state.teachAPI.baseURL} callbackURL={this.props.currentPath}>Sign in</LoginLink>
       </div>
     );
   },
 
   renderNeedCredlyLinked: function() {
+    // FIXME: TODO: finish this up.
+    var modal = null;
+    if (this.state.showLinkModal) {
+      modal = (
+        <Modal modalTitle="" className="modal-credly folded" hideModal={this.hideLinkModal}>
+          <h3 className="centered">Connect to Credly</h3>
+          <p>
+            Credly allows you to earn and store digital badges and credentials from a variety of
+            education providers and services, including Mozilla.
+            Learn more <a href='https://example.org'>about Credly</a>.
+          </p>
+          <CredlyLinkForm linkAccounts={this.linkAccounts} hideModal={this.hideLinkModal}/>
+        </Modal>
+      );
+    }
+    var badgeCriteria = this.formBadgeCriteria(this.state.badge.criteria);
+    var username = this.state.teachAPI.getUsername();
     return (
-      <div>
+      <div className="credly-link">
+        { badgeCriteria }
         <Divider/>
-        <p>It looks like we have no Credly access token for you yet. Click  to link up your Credly account:</p>
-        <button className="btn btn-awsm">Link up with Credly</button>
+        <h3 className={'text-light'}>Apply for this badge</h3>
+        <p>Hi {username}! Connect to Credly to apply for this badge. <button className="btn btn-awsm" onClick={this.showLinkModal}>Connect</button></p>
+        {modal}
       </div>
     );
   },
@@ -363,7 +383,26 @@ var BadgePage = React.createClass({
 
   handleClaimRequest: function(err, data) {
     //window.location = window.location.toString();
+  },
+
+  showLinkModal: function(evt) {
+    this.setState({ showLinkModal: true });
+  },
+
+  hideLinkModal: function(evt) {
+    this.setState({ showLinkModal: false });
+  },
+
+  linkAccounts: function(email, password) {
+    // tell the badgeAPI to set up an access token for this user using their
+    // supplied email and password, which we will then immediately forget again.
+    this.state.badgeAPI.ensureLogin(email, password, this.reloadPage);
+  },
+
+  reloadPage: function() {
+    //window.location = window.location.toString();
   }
+
 });
 
 module.exports = BadgePage;
