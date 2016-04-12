@@ -46,6 +46,7 @@ var BadgePage = React.createClass({
     var teachAPI = this.props.teachAPI || new TeachAPI();
     var badgeAPI = new BadgesAPI({ teachAPI: teachAPI });
     return {
+      hasAccess: false,
       teachAPI: teachAPI,
       badgeAPI: badgeAPI,
       badge: {
@@ -65,8 +66,21 @@ var BadgePage = React.createClass({
     };
   },
 
+  toggleAccess: function(err, result) {
+    result = result || { access: false };
+    this.setState({
+      hasAccess: result.access
+    });
+  },
+
   componentDidMount: function() {
+    // get this specific badge's details
     this.state.badgeAPI.getBadgeDetails(this.props.params.id, this.handleBadgeData);
+
+    // we're also interested in whether this user is credly-authenticated
+    badgeAPI.hasAccess(this.toggleAccess, function(err, data) {
+      if (err) return console.error("not logged into credly");
+    });
   },
 
   handleBadgeData: function(err, data) {
@@ -126,6 +140,14 @@ var BadgePage = React.createClass({
     }
     else if (!user) {
       content = this.renderAnonymousView();
+    }
+    else if (!this.state.hasAccess) {
+      content = (
+        <div>
+          { this.renderAnonymousView() }
+          <p>It looks like we have no Credly access token for you yet. Click here to link up your Credly account.</p>
+        </div>
+      );
     }
     else if (this.state.badge.status === Badge.achieved) {
       content = this.renderAchieved();
