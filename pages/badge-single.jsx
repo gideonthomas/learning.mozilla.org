@@ -37,9 +37,11 @@ var BadgePage = React.createClass({
     pageTitle: 'Badges',
     pageClassName: 'badges single-badge'
   },
+
   contextTypes: {
     history: React.PropTypes.object
   },
+
   getInitialState: function () {
     var teachAPI = this.props.teachAPI || new TeachAPI();
     var badgeAPI = new BadgesAPI({ teachAPI: teachAPI });
@@ -56,7 +58,10 @@ var BadgePage = React.createClass({
         criteria: []
       },
       prev: false,
-      next: false
+      next: false,
+      evidenceLink: '',
+      evidenceText: '',
+      evidenceFiles: []
     };
   },
 
@@ -73,6 +78,8 @@ var BadgePage = React.createClass({
 
   parseBadgeDetails: function(data) {
     var bdata = data.badge;
+
+    console.log(bdata);
 
     var prev = false;
     if (data.prev) {
@@ -95,6 +102,9 @@ var BadgePage = React.createClass({
     if (data.earned) { status = Badge.achieved; }
     if (data.pending) { status = Badge.pending; }
 
+    var reqs = bdata.require_claim_evidence_description;
+    var matched = reqs.match(/((\d+(\.)?)?[^.]+)/g);
+
     this.setState({
       badge: {
         id: bdata.id,
@@ -102,7 +112,7 @@ var BadgePage = React.createClass({
         description: bdata.description,
         icon: bdata.image_url,
         icon2x: bdata.image_url,
-        criteria: (bdata.criteria || '').split(/\r?\n/),
+        criteria: matched,
         status: status
       },
       prev: prev,
@@ -125,11 +135,13 @@ var BadgePage = React.createClass({
       content = this.renderEligible();
     }
 
+    // This currently renders as "elligible" until the badge
+    // data actually loads, which means people might see the
+    // wrong state for a few seconds. We want to fix that.
+
     return (
       <div className="individual-badge">
-        <div>
-          <a href="/badges">← back to credentials</a>
-        </div>
+        <div> <a href="/badges">← back to credentials</a> </div>
         <BadgeHorizontalIcon badge={this.state.badge} />
         { content }
         <Divider />
@@ -208,60 +220,111 @@ var BadgePage = React.createClass({
   },
 
   renderApplicationForm: function() {
+    var showButton = this.state.evidenceText || this.state.evidenceLink || this.state.evidenceFiles.length > 0;
+
     return (
       <div className="apply-send-qualifications">
-      {
-        /*
-        <p><strong className={'text-bold'}>Ideas?</strong> You could submit a blog post, a project you made
-          using Mozilla's tools, or another web creation you made. Demonstrate your understanding in your
-          own unique way!</p>
         <h3 className={'text-light'}>Apply for this badge</h3>
-        <form className="horizontal-form" role="form" onSubmit={this.onQualificationsSubmit}>
-          <div className="form-group">
-            <label htmlFor="qualifications" className="control-label">What qualifies you to earn this
-              badge?</label>
-            <textarea
-              name="qualifications"
-              ref="qualifications"
-              id="qualifications"
-              cols="30"
-              rows="10"
-              className="form-control"
-              placeholder="I've earned this badge by working on this project: [link]. My project demonstrates an understanding of [skill/competency] through [explain further]."></textarea>
-          </div>
 
-          <div className="optional-file-input">
-            <input type="file" className="hidden" name="optional_file" id="optional_file"
-                 ref="optionalFile"/>
-            <button type="button" ref="optionalFileBtn" className="btn btn-link"
-                onClick={this.handleFileSelect}>Add Optional Attachment(s)
-            </button>
-          </div>
+        <div className="horizontal-form">
+          <fieldset>
+            <label className="control-label">Tell us what qualifies you to earn this badge:</label>
+            <textarea onChange={this.updateEvidenceText} value={this.state.evidenceText} placeholder="Describe what you've done to earn this badge..."/>
+          </fieldset>
 
-          <div>
-            <button type="submit" className="btn btn-awsm">Apply</button>
-          </div>
-        </form>
-        */
-       }
-       <button type="submit" className="btn btn-awsm" onClick={this.claimBadge}>Apply</button>
+          <fieldset>
+            <label className="control-label">Attach an (optional) link as part of your evidence:</label>
+            <input type="text" placeholder="Give a link to a page to act as evidence" value={this.state.evidenceLink} onChange={this.updateEvidenceLink} />
+          </fieldset>
+
+          <fieldset>
+            <input type="file" className="hidden" ref="optionalFile" onChange={this.handleFiles}/>
+            <label className="control-label">Attach an (optional) file as part of your evidence:</label>
+            <div>
+              <button className="btn btw-awsm" onClick={this.selectFiles}>Click here to attachment a file</button>
+            </div>
+          </fieldset>
+
+          <button className={"btn btn-awsm"} disabled={!showButton} onClick={this.claimBadge}>Apply</button>
+        </div>
       </div>
     );
   },
 
+  updateEvidenceText: function(evt) {
+    this.setState({
+      evidenceText: evt.target.value
+    });
+  },
+
+  updateEvidenceLink: function(evt) {
+    this.setState({
+      evidenceLink: evt.target.value
+    });
+  },
+
+  selectFiles: function() {
+    this.refs.optionalFile.click();
+  },
+
+  handleFiles: function(evt) {
+    var component = this;
+    var files = evt.target.files;
+    var attachments = [];
+    Array.from(files).forEach(function(file) {
+      var reader = new FileReader();
+      reader.onload = (function(f) {
+        return function(evt) {
+          var name = escape(f.name);
+          var data = evt.target.result;
+          if (data) {
+            data = data.substring(data.indexOf('base64,')+'base64,'.length);
+            attachments.push({ name: name, file: data });
+          }
+
+          if(attachments.length === files.length) {
+            component.setState({
+              evidenceFiles: attachments
+            });
+          }
+        };
+      })(file);
+      reader.readAsDataURL(file);
+    });
+  },
+
   claimBadge: function() {
-    this.state.badgeAPI.claimBadge(this.state.badge.id, {
-      evidences: [
-        {
-          file: "http://imgur.com/gallery/uqUjRPd",
-          name: "image link"
-        }
-      ]
-    }, this.handleClaimRequest);
+    var evidences = [];
+
+    if (this.state.evidenceText) {
+      evidences.push({
+        file: btoa(this.state.evidenceText),
+        name: "Claim description"
+      });
+    }
+
+    if (this.state.evidenceLink) {
+      evidences.push({
+        file: this.state.evidenceLink,
+        name: "Proof of claim link"
+      });
+    }
+
+    if (this.state.evidenceFiles.length > 0) {
+      evidences = evidences.concat(this.state.evidenceFiles);
+    }
+
+    if (evidences.length === 0) {
+      return console.error("a badge claim without evidence was attempted");
+    }
+
+    console.log(evidences);
+
+    this.state.badgeAPI.claimBadge(this.state.badge.id, { evidences: evidences }, this.handleClaimRequest);
   },
 
   handleClaimRequest: function(err, data) {
-    console.log(err, data)
+    //window.location = window.location.toString();
   }
 });
 

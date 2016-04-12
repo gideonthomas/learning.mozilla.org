@@ -54,6 +54,8 @@ var BadgesPage = React.createClass({
 
   parseBadges: function (err, response) {
 
+    console.log(response);
+
     // do parsing here
     var data = [];
     var earned = response.earned || [];
@@ -74,12 +76,13 @@ var BadgesPage = React.createClass({
         'id': badge.id,
       };
 
+      // order matters: 'earned' also contains pending-badges due to how Credly works.
       if (noUser) {
         interpreted.status = false;
-      } else if (earned.indexOf(badge.id) !== -1) {
-        interpreted.status = "achieved";
       } else if (pending.indexOf(badge.id) !== -1) {
         interpreted.status = "pending";
+      } else if (earned.indexOf(badge.id) !== -1) {
+        interpreted.status = "achieved";
       } else {
         interpreted.status = "eligible";
       }
