@@ -100,19 +100,16 @@ var BadgesPage = React.createClass({
           <section>
             <IconLinks>
               <IconLink
-                link="https://discourse.webmaker.org/t/if-youre-new-to-the-community-please-introduce-yourself"
                 imgSrc="/img/pages/badges/svg/icon-explore.svg"
                 head="Explore"
                 subhead="See all badges we offer and which ones you qualify for."
               />
               <IconLink
-                link="https://discourse.webmaker.org/t/if-youre-new-to-the-community-please-introduce-yourself"
                 imgSrc="/img/pages/badges/svg/icon-earn.svg"
                 head="Earn"
                 subhead="Apply for badges by sharing your experiences."
               />
               <IconLink
-                link="https://discourse.webmaker.org/t/if-youre-new-to-the-community-please-introduce-yourself"
                 imgSrc="/img/pages/badges/svg/icon-share.svg"
                 head="Share"
                 subhead="Show your employers and friends you have the skills."
@@ -174,7 +171,7 @@ var BadgesPage = React.createClass({
     return this.state.badges.map(function (badge) {
       var linkUrl = '/badge/' + badge.id + '/' + urlize(badge.title);
       return (
-        <div key={badge.id} className="col-md-4">
+        <div key={badge.id} className="col-md-3">
           <Link to={ linkUrl } className={'badge-icon-link'}>
             <BadgeVerticalIcon badge={badge} anonymous={anonymous} />
           </Link>

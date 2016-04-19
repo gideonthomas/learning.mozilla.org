@@ -50,6 +50,8 @@ var BadgePage = React.createClass({
     return {
       hasAccess: false,
       showLinkModal: false,
+      applying: false,
+      showApplyModal: false,
       teachAPI: teachAPI,
       badgeAPI: badgeAPI,
       badge: {
@@ -282,6 +284,23 @@ var BadgePage = React.createClass({
   renderApplicationForm: function() {
     var showButton = this.state.evidenceText || this.state.evidenceLink || this.state.evidenceFiles.length > 0;
 
+    if (this.state.applying && this.state.showApplyModal) {
+      return (
+        <Modal modalTitle="" className="modal-credly folded" hideModal={this.hideApplyModal}>
+          <h3 className="centered">You've applied for this badge</h3>
+          <p>
+            We've received your badge application!
+          </p>
+          <p>
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
+            laboris nisi ut aliquip ex ea commodo consequat.
+          </p>
+          <input type="submit" className="btn btn-awsm center-block" onClick={this.hideApplyModal} value="Back to my badge"/>
+        </Modal>
+      );
+    }
+
     return (
       <div className="apply-send-qualifications">
         <h3 className={'text-light'}>Apply for this badge</h3>
@@ -289,7 +308,7 @@ var BadgePage = React.createClass({
         <div className="horizontal-form">
           <fieldset>
             <label className="control-label">Tell us what qualifies you to earn this badge:</label>
-            <textarea onChange={this.updateEvidenceText} value={this.state.evidenceText} placeholder="Describe what you've done to earn this badge..."/>
+            <textarea rows={10} onChange={this.updateEvidenceText} value={this.state.evidenceText} placeholder="Describe what you've done to earn this badge..."/>
           </fieldset>
 
           <fieldset>
@@ -378,7 +397,12 @@ var BadgePage = React.createClass({
       return console.error("a badge claim without evidence was attempted");
     }
 
-    this.state.badgeAPI.claimBadge(this.state.badge.id, { evidences: evidences }, this.handleClaimRequest);
+    this.setState({
+      applying: true,
+      showApplyModal: true
+    }, function() {
+      this.state.badgeAPI.claimBadge(this.state.badge.id, { evidences: evidences }, this.handleClaimRequest);
+    });
   },
 
   handleClaimRequest: function(err, data) {
@@ -393,14 +417,24 @@ var BadgePage = React.createClass({
     this.setState({ showLinkModal: false });
   },
 
+  showApplyModal: function(evt) {
+    this.setState({ showApplyModal: true });
+  },
+
+  hideApplyModal: function(evt) {
+    this.setState({ showApplyModal: false });
+    this.reloadPage();
+  },
+
   linkAccounts: function(email, password) {
     // tell the badgeAPI to set up an access token for this user using their
     // supplied email and password, which we will then immediately forget again.
     this.state.badgeAPI.ensureLogin(email, password, this.reloadPage);
   },
 
+  // reload the page on important events like logins and application state changes
   reloadPage: function() {
-    //window.location = window.location.toString();
+    window.location = window.location.toString();
   }
 
 });
