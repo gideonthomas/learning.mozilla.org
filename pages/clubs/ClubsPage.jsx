@@ -3,19 +3,19 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var Link = require('react-router').Link;
 
-var withTeachAPI = require('../hoc/with-teach-api.jsx');
+var withTeachAPI = require('../../hoc/with-teach-api.jsx');
 
-var fixLocation = require('../lib/fix-location.js');
+var fixLocation = require('../../lib/fix-location.js');
 
-var HeroUnit = require('../components/hero-unit.jsx');
-var Map = require('../components/map.jsx');
-var IconLinks = require('../components/icon-links.jsx');
-var IconLink = require('../components/icon-link.jsx');
-var LoginLink = require('../components/login.jsx').LoginLink;
-var ModalAddOrChangeYourClub = require('../components/modal-clubs.jsx');
-var ModalRemoveYourClub = require('../components/modal-clubs-remove.jsx');
-var Illustration = require('../components/illustration.jsx');
-var ImageTag = require('../components/imagetag.jsx');
+var HeroUnit = require('../../components/hero-unit.jsx');
+var Map = require('../../components/map.jsx');
+var IconLinks = require('../../components/icon-links.jsx');
+var IconLink = require('../../components/icon-link.jsx');
+var LoginLink = require('../../components/login.jsx').LoginLink;
+var ModalAddOrChangeYourClub = require('../../components/modal-clubs.jsx');
+var ModalRemoveYourClub = require('../../components/modal-clubs-remove.jsx');
+var Illustration = require('../../components/illustration.jsx');
+var ImageTag = require('../../components/imagetag.jsx');
 
 var Intro = (
   <section className="intro intro-after-banner">

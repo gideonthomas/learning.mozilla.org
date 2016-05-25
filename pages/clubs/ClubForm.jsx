@@ -3,167 +3,241 @@ var React = require('react');
 var ReactDOM = require('react-dom');
 var Link = require('react-router').Link;
 
-var fixLocation = require('../lib/fix-location.js');
+var fixLocation = require('../../lib/fix-location.js');
 
-var IconLinks = require('../components/icon-links.jsx');
-var IconLink = require('../components/icon-link.jsx');
-var LoginLink = require('../components/login.jsx').LoginLink;
-var ModalAddOrChangeYourClub = require('../components/modal-clubs.jsx');
-var ModalRemoveYourClub = require('../components/modal-clubs-remove.jsx');
-var Illustration = require('../components/illustration.jsx');
-var ImageTag = require('../components/imagetag.jsx');
+var IconLinks = require('../../components/icon-links.jsx');
+var IconLink = require('../../components/icon-link.jsx');
+var LoginLink = require('../../components/login.jsx').LoginLink;
+var ModalAddOrChangeYourClub = require('../../components/modal-clubs.jsx');
+var ModalRemoveYourClub = require('../../components/modal-clubs-remove.jsx');
+var Illustration = require('../../components/illustration.jsx');
+var ImageTag = require('../../components/imagetag.jsx');
 
-var WhyOrganize = (
-  <section>
-    <div className="why-organize-a-mozilla-club">
-      <h2>Why organize a Mozilla Club?</h2>
-      <div className="row">
-        <div className="col-sm-6 col-md-6 col-lg-6">
-          <p>
-            <strong>Your learners will make things that interest them.</strong> We learn best by making
-            projects we care about, with peers who support and encourage us.
-          </p>
-        </div>
-        <div className="col-sm-6 col-md-6 col-lg-6">
-          <p>
-            <strong>Your learners will benefit from regular engagement.</strong> Literacy doesn’t
-            happen overnight. Mozilla Clubs honors the fact that learning takes time.
-          </p>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-sm-6 col-md-6 col-lg-6">
-          <p>
-            <strong>You’ll develop your leadership skills.</strong> Improve your own leadership and
-            organizing experience by becoming a Mozilla Club Captain.
-          </p>
-        </div>
-        <div className="col-sm-6 col-md-6 col-lg-6">
-          <p>
-            <strong>You can use Mozilla’s free and educator-tested curriculum.</strong> Our <Link to={"/activities"}>curriculum</Link> is
-            free to use and remix.
-          </p>
-        </div>
-      </div>
-      <div className="row">
-        <div className="col-sm-12 col-md-12 col-lg-12">
-          <p>
-            <strong>You can embed it in your existing program.</strong> You may already be serving a
-            group of learners or running an educational offering. Mozilla Clubs can be a way to
-            embed <Link to="/web-literacy">Web Literacy</Link> into your existing program.
-          </p>
-        </div>
-      </div>
-    </div>
-  </section>
-);
 
-var MozillaClubLookLike = (
-  <section>
-    <div className="mozilla-club-looks-like">
-      <h2>What does a Mozilla Club look like in your...?</h2>
-      <ul>
-        <li>
-          <ImageTag
-            src1x="/img/pages/clubs/svg/icon-afterschool.svg"
-            width={"40"}
-            height={""}
-            alt="" />
-          <div className="place-label"><a href="https://docs.google.com/document/d/1rUivWQybJymNlfZZHWkSJqFN5TNDVuPRSH_YCObALeM">Afterschool program</a></div>
-        </li>
-        <li>
-          <ImageTag
-            src1x="/img/pages/clubs/svg/icon-community.svg"
-            width={"55"}
-            height={""}
-            alt="" />
-          <div className="place-label"><a href="https://docs.google.com/document/d/1gzbC5Q_XeHeii66v_Z4py6QrqYin5j1ozNhdeKJ-Ssg">Community meet-up</a></div>
-        </li>
-        <li>
-          <ImageTag
-            src1x="/img/pages/clubs/svg/icon-neighborhood.svg"
-            width={"35"}
-            height={""}
-            alt="" />
-          <div className="place-label"><a href="https://docs.google.com/a/mozilla.com/document/d/18DwRtmttN_EUlp1PUsQJWrDgUwMpCf5ipKG-TGfN1Rc/">Neighborhood with low connectivity</a></div>
-        </li>
-        <li>
-          <ImageTag
-            src1x="/img/pages/clubs/svg/icon-programs.svg"
-            width={"45"}
-            height={""}
-            alt="" />
-          <div className="place-label"><a href="https://docs.google.com/document/d/1WbEEuomaH3eHd--vn_mBBBdAMuS8s9_WxJ4zm-N-UQI">Existing program</a></div>
-        </li>
-        <li>
-          <ImageTag
-            src1x="/img/pages/clubs/svg/icon-university.svg"
-            width={"55"}
-            height={""}
-            alt="" />
-          <div className="place-label">University campus<div className="coming-soon">(coming soon)</div></div>
-        </li>
-        <li>
-          <ImageTag
-            src1x="/img/pages/clubs/svg/icon-library.svg"
-            width={"40"}
-            height={""}
-            alt="" />
-          <div className="place-label">Library<div className="coming-soon">(coming soon)</div></div>
-        </li>
-        <li>
-          <ImageTag
-            src1x="/img/pages/clubs/svg/icon-classroom.svg"
-            width={"45"}
-            height={""}
-            alt="" />
-          <div className="place-label">Classroom<div className="coming-soon">(coming soon)</div></div>
-        </li>
-      </ul>
-    </div>
-  </section>
-);
-
-var ClubCaptainPledge = (
-  <section>
-    <div className="club-captain-pledge">
-      <Illustration
-        width={200} height={200}
-        src1x="/img/pages/clubs/intro-photo.png"
-        src2x="/img/pages/clubs/intro-photo@2x.png"
-        alt="">
-        <h3>A Mozilla Club Captain pledges to:</h3>
-        <ul>
-          <li><p>Teach how to read, write and participate on the Web using inclusive and participatory methods.</p></li>
-          <li><p>Empower learners through authentic making, reflective learning, and meaningful action with and on the Web.</p></li>
-          <li><p>Commit to the mission of universal web literacy and sharing their club’s experience with Mozilla’s community networks.</p></li>
-        </ul>
-      </Illustration>
-      <p>We believe in the power of peer learning. That’s why we match each Mozilla Club Captain with a volunteer Regional Coordinator who can guide you in getting started and making the most of this program.</p>
-    </div>
-  </section>
-);
-
-var ApplyCallout = React.createClass({
-  propTypes: {
-    showAddYourClubModal: React.PropTypes.func.isRequired
+// page 1
+var StepOne = React.createClass({
+  getInitialState: function() {
+    return {
+      name: null,
+      location: null,
+      occupation: null,
+      regionalCoordinator: null,
+      hostReason: null,
+      howDidYouHear: null
+    };
   },
+
+  getTotal: function() {
+    return Object.keys(this.state).length;
+  },
+
+  getFilled: function() {
+    var state = this.state;
+    return Object.keys(state).reduce(function(a,b) {
+      b = state[b];
+      b = b===null? 0 : b===false? 0 : b.length===0 ? 0 : 1;
+      return a + b;
+    }, 0);
+  },
+
+  setStateAsChange(state) {
+    var props = this.props;
+    this.setState(state, function() {
+      props.onChange();
+    });
+  },
+
   render: function() {
-    return(
-      <section>
-        <div className="apply-callout text-center">
-          <div className="vertical-divider"></div>
-          <h3 className="text-center">To get matched with a Regional Coordinator, please apply to be a Mozilla Club Captain.</h3>
-          <a className="btn" onClick={this.props.showAddYourClubModal}>Apply to be a Club Captain</a>
-          <p className="check-out-resources">If you’d like to get started on your own, check out these <a href="http://mozilla.github.io/learning-networks/clubs/">resources</a>.</p>
-          <div className="alert alert-warning text-left center-block">
-            <strong>Please note: </strong><span>Our first cohort of Regional Coordinators is in full swing right now, so you’ll be added to our waiting list. We’ll match you with a Regional Coordinator as soon as we can.</span>
+    return (
+      <div className="step1">
+        <fieldset>
+          <label>Name</label>
+          <input type="text" value={this.state.name} onChange={this.updateName} placeholder="Your full name"/>
+        </fieldset>
+        <fieldset>
+          <label>Location</label>
+          <input type="text" value={this.state.location} onChange={this.updateLocation} placeholder="City, Country"/>
+        </fieldset>
+        <fieldset>
+          <label>Occupation</label>
+          <input type="text" value={this.state.occupation} onChange={this.updateOccupation} placeholder="Student or professional at ..."/>
+        </fieldset>
+        <fieldset>
+          <label>Are you currently working with a Regional Coordinator?</label>
+          <div>
+            <input type="radio" name="regionalCoordinator" value="yes" checked={this.state.regionalCoordinator === 'yes'} onChange={this.updateRegionalCoordinator}/>Yes
+            <input type="radio" name="regionalCoordinator" value="no" checked={this.state.regionalCoordinator === 'no'} onChange={this.updateRegionalCoordinator}/>No
           </div>
-        </div>
-      </section>
+        </fieldset>
+        <fieldset>
+          <label>Why do you want to host a Mozilla Club?</label>
+          <textarea value={this.state.hostReason} onChange={this.updateHostReason} placeholder="Describe what you want to achieve and what your goals are. Minimum length 100 words."/>
+        </fieldset>
+        <fieldset>
+          <label>How did you hear about Mozilla Clubs?</label>
+          <input type="text" value={this.state.howDidYouHear} onChange={this.updateHowDidYouHear} placeholder="Select response"/>
+        </fieldset>
+      </div>
     );
-  }
+  },
+  updateName: function(evt) { this.setStateAsChange({ name: evt.target.value }); },
+  updateLocation: function(evt) { this.setStateAsChange({ location: evt.target.value }); },
+  updateOccupation: function(evt) { this.setStateAsChange({ occupation: evt.target.value }); },
+  updateRegionalCoordinator: function(evt) { this.setStateAsChange({ regionalCoordinator: (evt.target.value === 'yes') }); },
+  updateHostReason: function(evt) { this.setStateAsChange({ hostReason: evt.target.value }); },
+  updateHowDidYouHear: function(evt) { this.setStateAsChange({ howDidYouHear: evt.target.value }); }
 });
+
+
+
+// page 2
+var StepTwo = React.createClass({
+  getInitialState: function() {
+    return {
+      intent: null,
+      clubName: null,
+      meetingVenue: null,
+      frequency: null,
+      ageRange: [],
+      clubSize: null,
+      audienceType: null,
+      meetingSubjects: null,
+      affiliation: null,
+      pledgeAgreement: false
+    };
+  },
+
+  getTotal: function() {
+    return Object.keys(this.state).length;
+  },
+
+  getFilled: function() {
+    var state = this.state;
+    return Object.keys(state).reduce(function(a,b) {
+      b = state[b];
+      b = b===null? 0 : b===false? 0 : b.length===0 ? 0 : 1;
+      return a + b;
+    }, 0);
+  },
+
+  setStateAsChange(state) {
+    this.setState(state, function() {
+      this.props.onChange();
+    });
+  },
+
+  render: function() {
+    return (
+      <div className="step1">
+        <fieldset>
+          <label>Do you want to...</label>
+          <div>
+            <input type="radio" name="intent" value="start" checked={this.state.intent === 'start'} onChange={this.updateIntent}/>Start a club
+            <input type="radio" name="intent" value="integrate" checked={this.state.intent === 'integrate'} onChange={this.updateIntent}/>Integrate a Mozilla Club with your existing program
+          </div>
+        </fieldset>
+        <fieldset>
+          <label>Name your club</label>
+          <input type="text" value={this.state.clubName} onChange={this.updateClubName} placeholder=""/>
+        </fieldset>
+        <fieldset>
+          <label>Where will you meet?</label>
+          <input type="text" value={this.state.meetingVenue} onChange={this.updateMeetingVenue} placeholder="Name the venue, school, library, coffeeshop, university, etc..."/>
+        </fieldset>
+        <fieldset>
+          <label>How often will you meet?</label>
+          <div>
+            <input type="radio" name="frequency" value="weekly" checked={this.state.frequency === 'weekly'} onChange={this.updateFrequency}/>Once a week
+            <input type="radio" name="frequency" value="biweekly" checked={this.state.frequency === 'biweekly'} onChange={this.updateFrequency}/>Every other week
+            <input type="radio" name="frequency" value="monthly" checked={this.state.frequency === 'monthly'} onChange={this.updateFrequency}/>Once a month
+            <input type="radio" name="frequency" value="other" checked={this.state.frequency === 'other'} onChange={this.updateFrequency}/>Other:
+            <input type="text"  disabled={this.state.frequency !== 'other'} value={this.state.frequencyOther} placeholder='...' onChange={this.updateFrequencyOther}/>
+          </div>
+        </fieldset>
+        <fieldset>
+          <label>What will the age range of your audence be?</label>
+          <div>
+            <input type="checkbox" value="12-"   checked={this.state.ageRange.indexOf("12-"  ) > -1} onChange={this.updateAgeRange}/>Under 12 years old
+            <input type="checkbox" value="12-20" checked={this.state.ageRange.indexOf("12-20") > -1} onChange={this.updateAgeRange}/>12-20 years old
+            <input type="checkbox" value="21-35" checked={this.state.ageRange.indexOf("21-35") > -1} onChange={this.updateAgeRange}/>21-35 years old
+            <input type="checkbox" value="36-60" checked={this.state.ageRange.indexOf("36-60") > -1} onChange={this.updateAgeRange}/>35-60 years old
+            <input type="checkbox" value="61+"   checked={this.state.ageRange.indexOf("61+"  ) > -1} onChange={this.updateAgeRange}/>61 years or older
+            <input type="checkbox" value="other" checked={this.state.ageRange.indexOf("other") > -1} onChange={this.updateAgeRange}/>other:
+            <input type="text"     disabled={this.state.ageRange.indexOf("other") === -1} value={this.state.ageRangeOther} placeholder='...' onChange={this.updateAgeRangeOther}/>
+          </div>
+        </fieldset>
+        <fieldset>
+          <label>What is the size of your club?</label>
+          <div>
+            <input type="radio" name="clubSize" value="1-5"   checked={this.state.clubSize === '1-5'} onChange={this.updateClubSize}/>1-5 members
+            <input type="radio" name="clubSize" value="6-15"  checked={this.state.clubSize === '6-15'} onChange={this.updateClubSize}/>6-15 members
+            <input type="radio" name="clubSize" value="16-30" checked={this.state.clubSize === '16-30'} onChange={this.updateClubSize}/>16-30 members
+            <input type="radio" name="clubSize" value="31+"   checked={this.state.clubSize === '31+'} onChange={this.updateClubSize}/>31 or more members
+          </div>
+        </fieldset>
+        <fieldset>
+          <label>Which occupations will your audence have?</label>
+          <input type="text" value={this.state.audienceType} onChange={this.updateAudienceType} placeholder="Students, professionals, community leaders, etc..."/>
+        </fieldset>
+        <fieldset>
+          <label>What topics of subjects will you teach?</label>
+          <input type="text" value={this.state.meetingSubjects} onChange={this.updateMeetingSubjects} placeholder="Web literacy, 21st century skills, online privacy, social media, etc..."/>
+        </fieldset>
+        <fieldset>
+          <label>Affiliated institution or oganization</label> (optional)
+          <input type="text" value={this.state.affiliation} onChange={this.updateAffiliation} placeholder="Name of the school, library, organization, etc..."/>
+        </fieldset>
+
+        <fieldset>
+          <input type="checkbox" checked={this.state.pledgeAgreement} onChange={this.updatePledgeAgreement}/> I agree to the Mozilla Club Captain Pledge
+        </fieldset>
+      </div>
+    );
+  },
+
+  updateIntent: function(evt) { this.setStateAsChange({ intent: evt.target.value }); },
+  updateClubName: function(evt) { this.setStateAsChange({ clubName: evt.target.value }); },
+  updateMeetingVenue: function(evt) { this.setStateAsChange({ meetingVenue: evt.target.value }); },
+  updateFrequency: function(evt) { this.setStateAsChange({ frequency: evt.target.value }); },
+  updateFrequencyOther: function(evt) { this.setStateAsChange({ frequencyOther: evt.target.value }); },
+  updateAgeRange: function(evt) {
+    var val = evt.target.value;
+    var ar = this.state.ageRange;
+    var pos = ar.indexOf(val);
+    if (pos > -1) { ar.splice(pos,1); } else { ar.push(val); }
+    this.setStateAsChange({ ageRange: ar });
+  },
+  updateAgeRangeOther: function(evt) { this.setStateAsChange({ ageRangeOther: evt.target.value }); },
+  updateClubSize: function(evt) { this.setStateAsChange({ clubSize: evt.target.value }); },
+  updateAudienceType: function(evt) { this.setStateAsChange({ audienceType: evt.target.value }); },
+  updateMeetingSubjects: function(evt) { this.setStateAsChange({ meetingSubjects: evt.target.value }); },
+  updateAffiliation: function(evt) { this.setStateAsChange({ affiliation: evt.target.value }); },
+  updatePledgeAgreement: function(evt) { this.setStateAsChange({ pledgeAgreement: !this.state.pledgeAgreement }); },
+});
+
+
+
+var Progress = function(props) {
+  var st = {
+    display: 'inline-block',
+    height: '10px',
+    width: '50%',
+    background: 'transparent',
+    border: '1px solid grey',
+    borderRadius: '5px'
+  };
+  var cr = {
+    height: '10px',
+    width: props.value + '%',
+    background: 'lightblue',
+    borderRadius: '5px'
+  };
+  return <div className="progressBar" style={{textAlign: 'center'}}>
+    <div className="outer" style={st}><div className="inner" style={cr}/></div> {props.value}%
+  </div>;
+};
+
+
 
 var ClubForm = React.createClass({
   statics: {
@@ -175,41 +249,20 @@ var ClubForm = React.createClass({
   },
   getInitialState: function() {
     return {
-      currentStep: 0
-      steps: [
-        // page 1 fields
-        {
-          heading: 'Tell us more about you!',
-          name: null,
-          location: null,
-          occupation: null,
-          regionalCoordinator: null,
-          hostReason: null,
-          howDidYouHear: null,
-        },
-        // page 2 fields
-        {
-          heading: 'About your Club...',
-          intent: null,
-          clubName: null,
-          meetingVenue: null,
-          frequency: null,
-          ageRange: null,
-          clubSize: null,
-          audienceType: null,
-          meetingSubjects: null,
-          affiliation: null,
-          pledgeAgreement: null,
-        },
-        // submitted
-        {
-          heading: 'You just took the first step on your journey toward becoming a Mozilla Club Captain. Please check your email for further information.'
-        }
+      progress: 0,
+      currentStep: 0,
+      headings: [
+        'Tell us more about you!',
+        'About your Club...',
+        'You just took the first step on your journey toward becoming a Mozilla Club Captain. Please check your email for further information.'
       ]
     };
   },
   componentWillMount: function() {
     fixLocation(this.context.location);
+  },
+  componentDidMount: function() {
+    this.updateProgress();
   },
   render: function() {
     return (
@@ -221,20 +274,42 @@ var ClubForm = React.createClass({
               src1x="/img/pages/clubs/svg/icon-circle-clubs.svg"
               alt="">
               <h1>Apply to Become a Club Captain</h1>
-              <h2>{this.state.steps[this.state.currentStep].heading}</h2>
+              <h2>{this.state.headings[this.state.currentStep]}</h2>
             </Illustration>
           </section>
 
-          <fieldset>
-            ...
-          </fieldset>
+          <StepOne ref="step1" onChange={this.updateProgress} />
+          <StepTwo ref="step2" onChange={this.updateProgress} />
 
-          <Progress value={this.getProgress()} />
+          <button className="btn" onClick={this.nextStep}>Next</button>
+          <Progress value={this.state.progress} />
+
         </div>
       </div>
     );
   },
-  getProgress
+
+  updateProgress: function() {
+    var r1 = this.refs.step1;
+    var r2 = this.refs.step2;
+    if (!r1 || !r2) return 0;
+    var total = r1.getTotal() + r2.getTotal();
+    var filled = r1.getFilled() + r2.getFilled();
+    this.setState({
+      progress: (100*filled/total)|0
+    });
+  },
+
+  nextStep: function() {
+    // validate the current step's input
+    //
+    // ...
+
+    //
+    this.setState({
+      currentStep: this.state.currentStep + 1
+    });
+  }
 });
 
 module.exports = ClubForm;
