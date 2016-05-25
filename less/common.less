@@ -184,12 +184,17 @@ form {
   }
 }
 
-input, 
+input,
 textarea {
   width: 100%;
   padding: 1rem;
   border: @stroke;
   border-radius: @form-field-border-radius;
+}
+
+input[type=radio],
+input[type=checkbox] {
+  width: auto;
 }
 
 .optional-text {
