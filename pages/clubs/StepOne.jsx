@@ -1,5 +1,6 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
+var LocationSelector = require('../../components/LocationSelector.jsx');
 
 var StepOne = React.createClass({
   getInitialState: function() {
@@ -48,7 +49,7 @@ var StepOne = React.createClass({
         </fieldset>
         <fieldset>
           <label>Location</label>
-          <input type="text" value={this.state.location} onChange={this.updateLocation} placeholder="City, Country"/>
+          <LocationSelector onChange={this.updateLocation} placeholder="City, Country"/>
         </fieldset>
         <fieldset>
           <label>Occupation</label>
@@ -56,14 +57,10 @@ var StepOne = React.createClass({
         </fieldset>
         <fieldset>
           <label>Are you currently working with a Regional Coordinator?</label>
-          <span>
-            <input type="radio" name="regionalCoordinator" value="yes" checked={this.state.regionalCoordinator === 'yes'} onChange={this.updateRegionalCoordinator}/>
-            <span>Yes</span>
-          </span>
-          <span>
-            <input type="radio" name="regionalCoordinator" value="no" checked={this.state.regionalCoordinator === 'no'} onChange={this.updateRegionalCoordinator}/>
-            <span>No</span>
-          </span>
+          <div className="choiceGroup">
+            <div><input type="radio" name="regionalCoordinator" value="yes" checked={this.state.regionalCoordinator === 'yes'} onChange={this.updateRegionalCoordinator}/> Yes</div>
+            <div><input type="radio" name="regionalCoordinator" value="no" checked={this.state.regionalCoordinator === 'no'} onChange={this.updateRegionalCoordinator}/> No</div>
+          </div>
         </fieldset>
         <fieldset>
           <label>Why do you want to host a Mozilla Club?</label>
@@ -77,9 +74,13 @@ var StepOne = React.createClass({
     );
   },
   updateName: function(evt) { this.setStateAsChange({ name: evt.target.value }); },
-  updateLocation: function(evt) { this.setStateAsChange({ location: evt.target.value }); },
+  updateLocation: function(locationdata) {
+    try { locationdata = JSON.parse(locationdata); }
+    catch (e) { locationdata = { location: '', latitude: null, longitude: null }; }
+    this.setState(locationdata);
+  },
   updateOccupation: function(evt) { this.setStateAsChange({ occupation: evt.target.value }); },
-  updateRegionalCoordinator: function(evt) { this.setStateAsChange({ regionalCoordinator: (evt.target.value === 'yes') }); },
+  updateRegionalCoordinator: function(evt) { this.setStateAsChange({ regionalCoordinator: evt.target.value }); },
   updateHostReason: function(evt) { this.setStateAsChange({ hostReason: evt.target.value }); },
   updateHowDidYouHear: function(evt) { this.setStateAsChange({ howDidYouHear: evt.target.value }); },
 

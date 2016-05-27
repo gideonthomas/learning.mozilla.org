@@ -72,9 +72,9 @@ var StepTwo = React.createClass({
       <div className={className}>
         <fieldset>
           <label>Do you want to...</label>
-          <div>
-            <input type="radio" name="intent" value="start" checked={this.state.intent === 'start'} onChange={this.updateIntent}/>Start a club
-            <input type="radio" name="intent" value="integrate" checked={this.state.intent === 'integrate'} onChange={this.updateIntent}/>Integrate a Mozilla Club with your existing program
+          <div className="choiceGroup">
+            <span><input type="radio" name="intent" value="start" checked={this.state.intent === 'start'} onChange={this.updateIntent}/> Start a club</span>
+            <span><input type="radio" name="intent" value="integrate" checked={this.state.intent === 'integrate'} onChange={this.updateIntent}/> Integrate a Mozilla Club with your existing program</span>
           </div>
         </fieldset>
 
@@ -91,38 +91,50 @@ var StepTwo = React.createClass({
         <input type="text" value={this.state.clubName} onChange={this.updateClubName} placeholder=""/>
       </fieldset>
       <fieldset>
-        <label>{ labels[this.state.intent].location }</label>
+        <label>{ labels[this.state.intent].meetingVenue }</label>
         <input type="text" value={this.state.meetingVenue} onChange={this.updateMeetingVenue} placeholder="Name the venue, school, library, coffeeshop, university, etc..."/>
       </fieldset>
       <fieldset>
         <label>{ labels[this.state.intent].frequency }</label>
-        <div>
-          <input type="radio" name="frequency" value="weekly" checked={this.state.frequency === 'weekly'} onChange={this.updateFrequency}/>Once a week
-          <input type="radio" name="frequency" value="biweekly" checked={this.state.frequency === 'biweekly'} onChange={this.updateFrequency}/>Every other week
-          <input type="radio" name="frequency" value="monthly" checked={this.state.frequency === 'monthly'} onChange={this.updateFrequency}/>Once a month
-          <input type="radio" name="frequency" value="other" checked={this.state.frequency === 'other'} onChange={this.updateFrequency}/>Other:
-          <input type="text"  disabled={this.state.frequency !== 'other'} value={this.state.frequencyOther} placeholder='...' onChange={this.updateFrequencyOther}/>
+        <div className="choiceGroup">
+          <div className="col">
+            <div><input type="radio" name="frequency" value="weekly" checked={this.state.frequency === 'weekly'} onChange={this.updateFrequency}/> Once a week</div>
+            <div><input type="radio" name="frequency" value="biweekly" checked={this.state.frequency === 'biweekly'} onChange={this.updateFrequency}/> Every other week</div>
+          </div>
+          <div className="col">
+            <div><input type="radio" name="frequency" value="monthly" checked={this.state.frequency === 'monthly'} onChange={this.updateFrequency}/> Once a month</div>
+            <div><input type="radio" name="frequency" value="other" checked={this.state.frequency === 'other'} onChange={this.updateFrequency}/> Other:</div>
+          </div>
         </div>
+        <input type="text"  disabled={this.state.frequency !== 'other'} value={this.state.frequencyOther} placeholder='If "other", please explain' onChange={this.updateFrequencyOther}/>
       </fieldset>
       <fieldset>
         <label>{ labels[this.state.intent].ageRange }</label>
-        <div>
-          <input type="checkbox" value="12-"   checked={this.state.ageRange.indexOf("12-"  ) > -1} onChange={this.updateAgeRange}/>Under 12 years old
-          <input type="checkbox" value="12-20" checked={this.state.ageRange.indexOf("12-20") > -1} onChange={this.updateAgeRange}/>12-20 years old
-          <input type="checkbox" value="21-35" checked={this.state.ageRange.indexOf("21-35") > -1} onChange={this.updateAgeRange}/>21-35 years old
-          <input type="checkbox" value="36-60" checked={this.state.ageRange.indexOf("36-60") > -1} onChange={this.updateAgeRange}/>35-60 years old
-          <input type="checkbox" value="61+"   checked={this.state.ageRange.indexOf("61+"  ) > -1} onChange={this.updateAgeRange}/>61 years or older
-          <input type="checkbox" value="other" checked={this.state.ageRange.indexOf("other") > -1} onChange={this.updateAgeRange}/>other:
-          <input type="text"     disabled={this.state.ageRange.indexOf("other") === -1} value={this.state.ageRangeOther} placeholder='...' onChange={this.updateAgeRangeOther}/>
+        <div className="choiceGroup">
+          <div className="col">
+            <div><input type="checkbox" value="12-"   checked={this.state.ageRange.indexOf("12-"  ) > -1} onChange={this.updateAgeRange}/> Under 12 years old</div>
+            <div><input type="checkbox" value="12-20" checked={this.state.ageRange.indexOf("12-20") > -1} onChange={this.updateAgeRange}/> 12-20 years old</div>
+            <div><input type="checkbox" value="21-35" checked={this.state.ageRange.indexOf("21-35") > -1} onChange={this.updateAgeRange}/> 21-35 years old</div>
+          </div>
+          <div className="col">
+            <div><input type="checkbox" value="36-60" checked={this.state.ageRange.indexOf("36-60") > -1} onChange={this.updateAgeRange}/> 35-60 years old</div>
+            <div><input type="checkbox" value="61+"   checked={this.state.ageRange.indexOf("61+"  ) > -1} onChange={this.updateAgeRange}/> 61 years or older</div>
+            <div><input type="checkbox" value="other" checked={this.state.ageRange.indexOf("other") > -1} onChange={this.updateAgeRange}/> other:</div>
+          </div>
         </div>
+        <input type="text" disabled={this.state.ageRange.indexOf("other") === -1} value={this.state.ageRangeOther} placeholder='if "other", please explain' onChange={this.updateAgeRangeOther}/>
       </fieldset>
       <fieldset>
         <label>{ labels[this.state.intent].clubSize }</label>
-        <div>
-          <input type="radio" name="clubSize" value="1-5"   checked={this.state.clubSize === '1-5'} onChange={this.updateClubSize}/>1-5 members
-          <input type="radio" name="clubSize" value="6-15"  checked={this.state.clubSize === '6-15'} onChange={this.updateClubSize}/>6-15 members
-          <input type="radio" name="clubSize" value="16-30" checked={this.state.clubSize === '16-30'} onChange={this.updateClubSize}/>16-30 members
-          <input type="radio" name="clubSize" value="31+"   checked={this.state.clubSize === '31+'} onChange={this.updateClubSize}/>31 or more members
+        <div className="choiceGroup">
+          <div className="col">
+            <div><input type="radio" name="clubSize" value="1-5"   checked={this.state.clubSize === '1-5'} onChange={this.updateClubSize}/> 1-5 members</div>
+            <div><input type="radio" name="clubSize" value="6-15"  checked={this.state.clubSize === '6-15'} onChange={this.updateClubSize}/> 6-15 members</div>
+          </div>
+          <div className="col">
+            <div><input type="radio" name="clubSize" value="16-30" checked={this.state.clubSize === '16-30'} onChange={this.updateClubSize}/> 16-30 members</div>
+            <div><input type="radio" name="clubSize" value="31+"   checked={this.state.clubSize === '31+'} onChange={this.updateClubSize}/> 31 or more members</div>
+          </div>
         </div>
       </fieldset>
       <fieldset>
@@ -138,8 +150,8 @@ var StepTwo = React.createClass({
         <input type="text" value={this.state.affiliation} onChange={this.updateAffiliation} placeholder="Name of the school, library, organization, etc..."/>
       </fieldset>
 
-      <fieldset>
-        <input type="checkbox" checked={this.state.pledgeAgreement} onChange={this.updatePledgeAgreement}/> I agree to the Mozilla Club Captain Pledge
+      <fieldset className="choiceGroup">
+        <div><input type="checkbox" checked={this.state.pledgeAgreement} onChange={this.updatePledgeAgreement}/> I agree to the Mozilla Club Captain Pledge</div>
       </fieldset>
     </div>;
   },

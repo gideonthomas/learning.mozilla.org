@@ -11,8 +11,8 @@ var StepThree = require('./StepThree.jsx');
 
 var ClubForm = React.createClass({
   statics: {
-    pageTitle: "Club Form",
-    pageClassName: "clubs"
+    pageTitle: "Apply to Become a Club Captain",
+    pageClassName: "clubs-form"
   },
   contextTypes: {
     location: React.PropTypes.object
@@ -36,7 +36,7 @@ var ClubForm = React.createClass({
   },
   render: function() {
     return (
-      <div className="club-form">
+      <div>
         <div className="inner-container">
           <section className="intro intro-after-banner">
             <Illustration
@@ -63,8 +63,12 @@ var ClubForm = React.createClass({
     var buttons = [];
     if (this.state.currentStep > 0) buttons.push(<button className="btn" onClick={this.prevStep}>Back</button>);
     buttons.push(<button className="btn" onClick={this.state.currentStep === 2 ? this.generateReport : this.nextStep}>Next</button>);
-    if (this.state.currentStep < 2) buttons.push(<ProgressBar value={this.state.progress}/>);
-    return buttons;
+    return (
+      <div className="proceed">
+        <div>{buttons}</div>
+        { (this.state.currentStep < 2) ? <ProgressBar value={this.state.progress}/> : null }
+      </div>
+    );
   },
 
   updateProgress: function() {

@@ -33,6 +33,10 @@ var MENU_ENTRIES = [
         to: '/clubs'
       },
       {
+        name: "Become a Club Captain",
+        to: '/clubs/apply'
+      },
+      {
         name: "Maker Party",
         to: '/events'
       },

@@ -5,14 +5,13 @@ var ProgressBar = function(props) {
   var st = {
     display: 'inline-block',
     height: '10px',
-    width: '50%',
     background: 'transparent',
     border: '1px solid grey',
     borderRadius: '5px'
   };
   var cr = {
     height: '10px',
-    width: props.value + '%',
+    width: Math.min(100, props.value) + '%',
     background: 'lightblue',
     borderRadius: '5px'
   };
