@@ -10,6 +10,7 @@ var StepThree = React.createClass({
         <div className="arrowdown"/>
         <p>To learn more about Mozilla Clubs, read the Fact Sheet</p>
         <Divider/>
+        <button className="btn" onClick={this.props.onClick}>click for a fake reportout!</button>
       </div>
     );
   }

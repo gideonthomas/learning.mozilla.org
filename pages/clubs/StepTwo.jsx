@@ -191,7 +191,7 @@ var StepTwo = React.createClass({
       "reason to fill in the form: " + this.state.intent,
       "name for the club: " + this.state.clubName,
       "meeting venue: " + this.state.meetingVenue,
-      "how frequent will the club meet: " + freq,
+      "club meeting frequency: " + freq,
       "club participants age range: " + age,
       "club size: " + this.state.clubSize,
       "audience type: " + this.state.audienceType,

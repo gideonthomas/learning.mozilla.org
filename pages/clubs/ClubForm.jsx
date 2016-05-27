@@ -50,7 +50,7 @@ var ClubForm = React.createClass({
 
           <StepOne ref="step1" onChange={this.updateProgress} hidden={this.state.currentStep !== 0 }/>
           <StepTwo ref="step2" onChange={this.updateProgress} hidden={this.state.currentStep !== 1 }/>
-          <StepThree ref="step3" hidden={this.state.currentStep !== 2 }/>
+          <StepThree ref="step3" hidden={this.state.currentStep !== 2 } onClick={this.generateReport}/>
 
           { this.generateButtons() }
         </div>
@@ -62,7 +62,7 @@ var ClubForm = React.createClass({
     if (this.state.currentStep === 2) return null;
     var buttons = [];
     if (this.state.currentStep > 0) buttons.push(<button className="btn" onClick={this.prevStep}>Back</button>);
-    buttons.push(<button className="btn" onClick={this.state.currentStep === 2 ? this.generateReport : this.nextStep}>Next</button>);
+    buttons.push(<button className="btn" onClick={this.nextStep}>Next</button>);
     return (
       <div className="proceed">
         <div>{buttons}</div>
