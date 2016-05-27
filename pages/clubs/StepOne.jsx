@@ -1,6 +1,7 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
 var LocationSelector = require('../../components/LocationSelector.jsx');
+var Select = require('react-select');
 
 var StepOne = React.createClass({
   getInitialState: function() {
@@ -61,6 +62,10 @@ var StepOne = React.createClass({
             <div><input type="radio" name="regionalCoordinator" value="yes" checked={this.state.regionalCoordinator === 'yes'} onChange={this.updateRegionalCoordinator}/> Yes</div>
             <div><input type="radio" name="regionalCoordinator" value="no" checked={this.state.regionalCoordinator === 'no'} onChange={this.updateRegionalCoordinator}/> No</div>
           </div>
+          <div hidden={this.state.regionalCoordinator !== 'yes'}>
+            <label>What is your Regional Coordinator{"'"}s name?</label>
+            <input type="text" value={this.state.coordinatorName} placeholder='name' onChange={this.updateCoordinatorName}/>
+          </div>
         </fieldset>
         <fieldset>
           <label>Why do you want to host a Mozilla Club?</label>
@@ -68,7 +73,18 @@ var StepOne = React.createClass({
         </fieldset>
         <fieldset>
           <label>How did you hear about Mozilla Clubs?</label>
-          <input type="text" value={this.state.howDidYouHear} onChange={this.updateHowDidYouHear} placeholder="Select response"/>
+          <Select
+            value={this.state.howDidYouHear}
+            options={[
+              { value: 'from a friend', label: 'from a friend' },
+              { value: 'from an event', label: 'from an event' },
+              { value: 'Mozilla website', label: 'Mozilla website' },
+              { value: 'Social media', label: 'Social media' },
+              { value: 'other', label: 'other' }
+            ]}
+            onChange={this.updateHowDidYouHear}
+          />
+          <input hidden={this.state.howDidYouHear !== 'other'} type="text" value={this.state.howDidYouActuallyHear} onChange={this.updateHowDidYouActuallyHear} placeholder="Let us know how  you heard about becoming a club captain"/>
         </fieldset>
       </div>
     );
@@ -76,23 +92,35 @@ var StepOne = React.createClass({
   updateName: function(evt) { this.setStateAsChange({ name: evt.target.value }); },
   updateLocation: function(locationdata) {
     try { locationdata = JSON.parse(locationdata); }
-    catch (e) { locationdata = { location: '', latitude: null, longitude: null }; }
-    this.setState(locationdata);
+    catch (e) { locationdata = { location: null, latitude: null, longitude: null }; }
+    this.setStateAsChange({ location: locationdata.location });
   },
   updateOccupation: function(evt) { this.setStateAsChange({ occupation: evt.target.value }); },
   updateRegionalCoordinator: function(evt) { this.setStateAsChange({ regionalCoordinator: evt.target.value }); },
+  updateCoordinatorName: function(evt) { this.setStateAsChange({ coordinatorName: evt.target.value }); },
   updateHostReason: function(evt) { this.setStateAsChange({ hostReason: evt.target.value }); },
-  updateHowDidYouHear: function(evt) { this.setStateAsChange({ howDidYouHear: evt.target.value }); },
+  updateHowDidYouHear: function(value) { this.setStateAsChange({ howDidYouHear: value }); },
+  updateHowDidYouActuallyHear: function(evt) { this.setStateAsChange({ howDidYouActuallyHear: evt.target.value }); },
 
   generateReport() {
-    return [
+    var report = [
       "applicant name: " + this.state.name,
       "club location: " + this.state.location,
       "applicant occupation: " + this.state.occupation,
-      "are they a regional coordinator? " + this.state.regionalCoordinator,
-      "reason for hosting a club: " + this.state.hostReason,
-      "how they heard about moz clubs: " + this.state.howDidYouHear
+      "do they have a regional coordinator? " + this.state.regionalCoordinator
     ];
+
+    if (this.state.coordinatorName) {
+      report.push("regional coordinator name: " + this.state.coordinatorName);
+    }
+
+    report.push("reason for hosting a club: " + this.state.hostReason);
+
+    var how = this.state.howDidYouHear;
+    if (how === "other") { how = this.state.howDidYouActuallyHear; }
+    report.push("how they heard about moz clubs: " + how);
+
+    return report;
   }
 });
 

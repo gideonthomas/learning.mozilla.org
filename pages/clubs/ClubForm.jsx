@@ -61,8 +61,8 @@ var ClubForm = React.createClass({
   generateButtons: function() {
     if (this.state.currentStep === 2) return null;
     var buttons = [];
-    if (this.state.currentStep > 0) buttons.push(<button className="btn" onClick={this.prevStep}>Back</button>);
-    buttons.push(<button className="btn" onClick={this.nextStep}>Next</button>);
+    if (this.state.currentStep > 0) buttons.push(<button className="back btn" onClick={this.prevStep}>Back</button>);
+    buttons.push(<button className="btn" onClick={this.nextStep}>{this.state.currentStep===1 ? 'Submit' : 'Next'}</button>);
     return (
       <div className="proceed">
         <div>{buttons}</div>

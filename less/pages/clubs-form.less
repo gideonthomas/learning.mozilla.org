@@ -1,33 +1,69 @@
 .page.clubs-form {
-
   .page.clubs;
 
-  label {
-    margin-top: 1rem;
-  }
-
-  .choiceGroup {
+  .inner-container {
     width: 80%;
-    display: flex;
-    justify-content: space-around;
-    margin: 1rem auto;
-  }
+    margin: auto;
 
-  .proceed {
-    margin-bottom: 2rem;
-    text-align: center;
-
-    .btn {
-      margin: 1rem;
+    label {
+      margin-top: 1rem;
     }
 
-    .progressBar {
-      width: 100%;
-      text-align: center;
-      position: relative;
+    .pledge {
+      font-size: 90%;
+      a {
+        font-size: inherit;
+        font-weight: 600;
+        color: #16AEE5;
+      }
+    }
 
-      .outer {
-        width: ~"calc(30% - 3em)";
+    .choiceGroup {
+      margin: 1rem auto;
+
+      & > div {
+        width: 33%;
+        display: inline-block;
+        &.autowidth {
+          width: auto;
+        }
+      }
+    }
+
+    .proceed {
+      margin: 2rem;
+      text-align: center;
+
+      .btn {
+        margin: 1rem;
+        height: 2.25em;
+        line-height: 1;
+        padding: 0px 3em;
+
+        &.back {
+          color: @blueSidebarColor;
+          background-color: @paleBlue;
+          box-shadow: 0px 0.4rem 0px #999,
+                      0px 0.1rem 0px rgba(255, 255, 255, 0.5) inset;
+          color: #666;
+
+          &:hover {
+            top: 0.2rem;
+            background-color: @paleBlue;
+            box-shadow: 0px 0.2rem 0px #999,
+                        0px 0.1rem 0px rgba(255, 255, 255, 0.5) inset;
+          }
+        }
+      }
+
+      .progressBar {
+        width: 100%;
+        text-align: center;
+        position: relative;
+
+        .outer {
+          width: ~"calc(30% - 3em)";
+        }
       }
     }
   }
