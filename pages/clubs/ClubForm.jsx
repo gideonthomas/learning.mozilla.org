@@ -61,8 +61,14 @@ var ClubForm = React.createClass({
   generateButtons: function() {
     if (this.state.currentStep === 2) return null;
     var buttons = [];
-    if (this.state.currentStep > 0) buttons.push(<button className="back btn" onClick={this.prevStep}>Back</button>);
-    buttons.push(<button className="btn" onClick={this.nextStep}>{this.state.currentStep===1 ? 'Submit' : 'Next'}</button>);
+    if (this.state.currentStep > 0) {
+      buttons.push(
+        <button className="back btn" onClick={this.prevStep}>Back</button>
+      );
+    }
+    buttons.push(
+      <button className="btn" onClick={this.nextStep}>{this.state.currentStep===1 ? 'Submit' : 'Next'}</button>
+    );
     return (
       <div className="proceed">
         <div>{buttons}</div>
@@ -88,9 +94,16 @@ var ClubForm = React.createClass({
   },
 
   nextStep: function() {
-    this.setState({
-      currentStep: Math.min(this.state.currentStep + 1, 2)
-    });
+    var refname = 'step' + (this.state.currentStep+1)
+    console.log(refname);
+    var curRef = this.refs[refname];
+    var validates = curRef.validates();
+    console.log("validates:", validates);
+    if (validates) {
+      this.setState({
+        currentStep: Math.min(this.state.currentStep + 1, 2)
+      });
+    }
   },
 
   generateReport: function() {

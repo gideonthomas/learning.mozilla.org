@@ -46,11 +46,11 @@ var StepOne = React.createClass({
       <div className={className}>
         <fieldset>
           <label>Name</label>
-          <input type="text" value={this.state.name} onChange={this.updateName} placeholder="Your full name"/>
+          <input className={this.error('name')} type="text" value={this.state.name} onChange={this.updateName} placeholder="Your full name"/>
         </fieldset>
         <fieldset>
           <label>Location</label>
-          <LocationSelector onChange={this.updateLocation} placeholder="City, Country"/>
+          <LocationSelector className={this.error('location')} onChange={this.updateLocation} placeholder="City, Country"/>
         </fieldset>
         <fieldset>
           <label>Occupation</label>
@@ -58,7 +58,7 @@ var StepOne = React.createClass({
         </fieldset>
         <fieldset>
           <label>Are you currently working with a Regional Coordinator?</label>
-          <div className="choiceGroup">
+          <div className={"choiceGroup " + this.error('regionalCoordinator')}>
             <div><input type="radio" name="regionalCoordinator" value="yes" checked={this.state.regionalCoordinator === 'yes'} onChange={this.updateRegionalCoordinator}/> Yes</div>
             <div><input type="radio" name="regionalCoordinator" value="no" checked={this.state.regionalCoordinator === 'no'} onChange={this.updateRegionalCoordinator}/> No</div>
           </div>
@@ -69,11 +69,12 @@ var StepOne = React.createClass({
         </fieldset>
         <fieldset>
           <label>Why do you want to host a Mozilla Club?</label>
-          <textarea value={this.state.hostReason} onChange={this.updateHostReason} placeholder="Describe what you want to achieve and what your goals are. Minimum length 100 words."/>
+          <textarea className={this.error('hostReason')} value={this.state.hostReason} onChange={this.updateHostReason} placeholder="Describe what you want to achieve and what your goals are. Minimum length 50 words."/>
         </fieldset>
         <fieldset>
           <label>How did you hear about Mozilla Clubs?</label>
           <Select
+            className={this.error('howDidYouHear')}
             value={this.state.howDidYouHear}
             options={[
               { value: 'from a friend', label: 'from a friend' },
@@ -86,6 +87,7 @@ var StepOne = React.createClass({
           />
           <input hidden={this.state.howDidYouHear !== 'other'} type="text" value={this.state.howDidYouActuallyHear} onChange={this.updateHowDidYouActuallyHear} placeholder="Let us know how  you heard about becoming a club captain"/>
         </fieldset>
+        { this.renderValidationErrors() }
       </div>
     );
   },
@@ -102,7 +104,7 @@ var StepOne = React.createClass({
   updateHowDidYouHear: function(value) { this.setStateAsChange({ howDidYouHear: value }); },
   updateHowDidYouActuallyHear: function(evt) { this.setStateAsChange({ howDidYouActuallyHear: evt.target.value }); },
 
-  generateReport() {
+  generateReport: function() {
     var report = [
       "applicant name: " + this.state.name,
       "club location: " + this.state.location,
@@ -121,6 +123,59 @@ var StepOne = React.createClass({
     report.push("how they heard about moz clubs: " + how);
 
     return report;
+  },
+
+  validates: function() {
+    var clubState = this.state;
+    var errorElements = [];
+    var errors = [];
+
+    if (!clubState.name) {
+      errorElements.push('name');
+      errors.push("You must provide a name for your club.");
+    }
+    if (!clubState.location) {
+      errorElements.push('location');
+      errors.push("You must provide a location for your club.");
+    }
+    if (!clubState.regionalCoordinator) {
+      errorElements.push('regionalCoordinator');
+      errors.push("You must say whether you're working with a regional coordinator.");
+    }
+    if (!clubState.hostReason) {
+      errorElements.push('hostReason');
+      errors.push("Your must explain the reason for applying.");
+    }
+    else if (clubState.hostReason && clubState.hostReason.split(' ').length<45) {
+      errorElements.push('hostReason');
+      errors.push("Please xplain the reason for applying in 50 words or more.");
+    }
+    if (!clubState.howDidYouHear) {
+      errorElements.push('howDidYouHear');
+      errors.push("Please tell us how you heard about this program.");
+    }
+    this.setState({ errors: errors, errorElements: errorElements });
+    return !errors.length;
+  },
+
+  error: function(field) {
+    if (!this.state.errorElements) return null;
+    var error = this.state.errorElements.indexOf(field) > -1;
+    return error ? "error" : null;
+  },
+
+  renderValidationErrors: function() {
+    if (!this.state.errors || this.state.errors.length === 0) return null;
+    return (
+      <div className="alert alert-danger">
+        <p>Unfortunately, your application has some problems:</p>
+        <ul>
+        {this.state.errors.map(function(text,i) {
+          return <li key={i}>{text}</li>;
+        })}
+        </ul>
+      </div>
+    );
   }
 });
 

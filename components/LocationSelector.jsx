@@ -13,6 +13,7 @@ var LocationSelector = React.createClass({
       <Select
        disabled={this.props.disabled}
        placeholder={this.props.placeholder || "Type in a city or a country"}
+       className={this.props.className}
 
        // We need to provide undefined instead of an empty
        // string in order for the placeholder text to show.
