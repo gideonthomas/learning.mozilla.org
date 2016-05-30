@@ -3,6 +3,15 @@ var ReactDOM = require('react-dom');
 var LocationSelector = require('../../components/LocationSelector.jsx');
 var Select = require('react-select');
 
+var progressFields = [
+  "name",
+  "location",
+  "occupation",
+  "regionalCoordinator",
+  "hostReason",
+  "howDidYouHear"
+];
+
 var StepOne = React.createClass({
   getInitialState: function() {
     this.optional = [];
@@ -17,16 +26,13 @@ var StepOne = React.createClass({
   },
 
   getTotal: function() {
-    var optional = this.optional;
-    return Object.keys(this.state).filter(function(key) {
-      return optional.indexOf(key) === -1;
-    }).length;
+    return progressFields.length;
   },
 
   getFilled: function() {
     var state = this.state;
     var optional = this.optional;
-    return Object.keys(state).reduce(function(a,b) {
+    return progressFields.reduce(function(a,b) {
       b = state[b];
       b = b===null? 0 : b===false? 0 : b.length===0 ? 0 : optional.indexOf(b)>-1 ? 0 : 1;
       return a + b;
@@ -34,9 +40,11 @@ var StepOne = React.createClass({
   },
 
   setStateAsChange(state) {
-    var props = this.props;
     this.setState(state, function() {
-      props.onChange();
+      this.props.onChange();
+      if (this.state.errors && this.state.errors.length>0) {
+        this.validates();
+      }
     });
   },
 
@@ -48,14 +56,17 @@ var StepOne = React.createClass({
           <label>Name</label>
           <input className={this.error('name')} type="text" value={this.state.name} onChange={this.updateName} placeholder="Your full name"/>
         </fieldset>
+
         <fieldset>
           <label>Location</label>
           <LocationSelector className={this.error('location')} onChange={this.updateLocation} placeholder="City, Country"/>
         </fieldset>
+
         <fieldset>
           <label>Occupation</label>
           <input type="text" value={this.state.occupation} onChange={this.updateOccupation} placeholder="Student or professional at ..."/>
         </fieldset>
+
         <fieldset>
           <label>Are you currently working with a Regional Coordinator?</label>
           <div className={"choiceGroup " + this.error('regionalCoordinator')}>
@@ -67,10 +78,12 @@ var StepOne = React.createClass({
             <input type="text" value={this.state.coordinatorName} placeholder='name' onChange={this.updateCoordinatorName}/>
           </div>
         </fieldset>
+
         <fieldset>
           <label>Why do you want to host a Mozilla Club?</label>
           <textarea className={this.error('hostReason')} value={this.state.hostReason} onChange={this.updateHostReason} placeholder="Describe what you want to achieve and what your goals are. Minimum length 50 words."/>
         </fieldset>
+
         <fieldset>
           <label>How did you hear about Mozilla Clubs?</label>
           <Select
@@ -87,6 +100,7 @@ var StepOne = React.createClass({
           />
           <input hidden={this.state.howDidYouHear !== 'other'} type="text" value={this.state.howDidYouActuallyHear} onChange={this.updateHowDidYouActuallyHear} placeholder="Let us know how  you heard about becoming a club captain"/>
         </fieldset>
+
         { this.renderValidationErrors() }
       </div>
     );
@@ -148,7 +162,7 @@ var StepOne = React.createClass({
     }
     else if (clubState.hostReason && clubState.hostReason.split(' ').length<45) {
       errorElements.push('hostReason');
-      errors.push("Please xplain the reason for applying in 50 words or more.");
+      errors.push("Please explain the reason for applying in 50 words or more.");
     }
     if (!clubState.howDidYouHear) {
       errorElements.push('howDidYouHear');

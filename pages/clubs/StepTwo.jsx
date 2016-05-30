@@ -26,6 +26,18 @@ var labels = {
   integrate: integrateLabels
 };
 
+var progressFields = [
+  "intent",
+  "clubName",
+  "meetingVenue",
+  "frequency",
+  "ageRange",
+  "clubSize",
+  "audienceType",
+  "meetingSubjects",
+  "pledgeAgreement"
+]
+
 var StepTwo = React.createClass({
   getInitialState: function() {
     this.optional = ['affiliation'];
@@ -44,16 +56,13 @@ var StepTwo = React.createClass({
   },
 
   getTotal: function() {
-    var optional = this.optional;
-    return Object.keys(this.state).filter(function(key) {
-      return optional.indexOf(key) === -1;
-    }).length;
+    return progressFields.length;
   },
 
   getFilled: function() {
     var state = this.state;
     var optional = this.optional;
-    return Object.keys(state).reduce(function(a,b) {
+    return progressFields.reduce(function(a,b) {
       b = state[b];
       b = b===null? 0 : b===false? 0 : b.length===0 ? 0 : optional.indexOf(b)>-1 ? 0 : 1;
       return a + b;
@@ -63,6 +72,9 @@ var StepTwo = React.createClass({
   setStateAsChange(state) {
     this.setState(state, function() {
       this.props.onChange();
+      if (this.state.errors && this.state.errors.length>0) {
+        this.validates();
+      }
     });
   },
 
@@ -84,16 +96,21 @@ var StepTwo = React.createClass({
   },
 
   generateRest: function() {
-    if (!this.state.intent) return null;
+    if (!this.state.intent) {
+      return this.renderValidationErrors();
+    }
+
     return <div>
       <fieldset>
         <label>{ labels[this.state.intent].clubName }</label>
         <input type="text" value={this.state.clubName} onChange={this.updateClubName} placeholder=""/>
       </fieldset>
+
       <fieldset>
         <label>{ labels[this.state.intent].meetingVenue }</label>
         <input type="text" value={this.state.meetingVenue} onChange={this.updateMeetingVenue} placeholder="Name the venue, school, library, coffeeshop, university, etc..."/>
       </fieldset>
+
       <fieldset>
         <label>{ labels[this.state.intent].frequency }</label>
         <div className="choiceGroup">
@@ -108,6 +125,7 @@ var StepTwo = React.createClass({
         </div>
         <input type="text"  hidden={this.state.frequency !== 'other'} value={this.state.frequencyOther} placeholder='If "other", please explain' onChange={this.updateFrequencyOther}/>
       </fieldset>
+
       <fieldset>
         <label>{ labels[this.state.intent].ageRange }</label>
         <div className="choiceGroup">
@@ -126,6 +144,7 @@ var StepTwo = React.createClass({
         </div>
         <input type="text" hidden={this.state.ageRange.indexOf("other") === -1} value={this.state.ageRangeOther} placeholder='if "other", please explain' onChange={this.updateAgeRangeOther}/>
       </fieldset>
+
       <fieldset>
         <label>{ labels[this.state.intent].clubSize }</label>
         <div className="choiceGroup">
@@ -139,14 +158,17 @@ var StepTwo = React.createClass({
           </div>
         </div>
       </fieldset>
+
       <fieldset>
         <label>{ labels[this.state.intent].audienceType }</label>
         <input type="text" value={this.state.audienceType} onChange={this.updateAudienceType} placeholder="Students, professionals, community leaders, etc..."/>
       </fieldset>
+
       <fieldset>
         <label>{ labels[this.state.intent].meetingSubjects }</label>
         <input type="text" value={this.state.meetingSubjects} onChange={this.updateMeetingSubjects} placeholder="Web literacy, 21st century skills, online privacy, social media, etc..."/>
       </fieldset>
+
       <fieldset>
         <label>Affiliated institution or oganization</label> (optional)
         <input type="text" value={this.state.affiliation} onChange={this.updateAffiliation} placeholder="Name of the school, library, organization, etc..."/>
@@ -155,6 +177,8 @@ var StepTwo = React.createClass({
       <fieldset>
         <div className="pledge"><input type="checkbox" checked={this.state.pledgeAgreement} onChange={this.updatePledgeAgreement}/> I agree to the <a href="http://soapdog.github.io/your-first-month-as-a-club-captain-guide/#mozilla-club-captain-pledge">Mozilla Club Captain Pledge</a>.</div>
       </fieldset>
+
+      { this.renderValidationErrors() }
     </div>;
   },
 
@@ -163,7 +187,6 @@ var StepTwo = React.createClass({
   updateMeetingVenue: function(evt) { this.setStateAsChange({ meetingVenue: evt.target.value }); },
 
   updateFrequency: function(evt) { this.setStateAsChange({ frequency: evt.target.value }); },
-
   updateFrequencyOther: function(evt) { this.setStateAsChange({ frequencyOther: evt.target.value }); },
 
   updateAgeRange: function(evt) {
@@ -173,7 +196,6 @@ var StepTwo = React.createClass({
     if (pos > -1) { ar.splice(pos,1); } else { ar.push(val); }
     this.setStateAsChange({ ageRange: ar });
   },
-
   updateAgeRangeOther: function(evt) { this.setStateAsChange({ ageRangeOther: evt.target.value }); },
 
   updateClubSize: function(evt) { this.setStateAsChange({ clubSize: evt.target.value }); },
@@ -181,6 +203,75 @@ var StepTwo = React.createClass({
   updateMeetingSubjects: function(evt) { this.setStateAsChange({ meetingSubjects: evt.target.value }); },
   updateAffiliation: function(evt) { this.setStateAsChange({ affiliation: evt.target.value }); },
   updatePledgeAgreement: function(evt) { this.setStateAsChange({ pledgeAgreement: !this.state.pledgeAgreement }); },
+
+
+  validates: function() {
+    var clubState = this.state;
+    var errorElements = [];
+    var errors = [];
+
+    if (!clubState.intent) {
+      errorElements.push('intent');
+      errors.push("You need to fill in this part of the application.");
+    }
+    else {
+      if (!clubState.clubName) {
+        errorElements.push('clubName');
+        errors.push("You need to fill in the name of your club.");
+      }
+      if (!clubState.meetingVenue) {
+        errorElements.push('meetingVenue');
+        errors.push("Please let us know where your club meets.");
+      }
+      if (!clubState.frequency) {
+        errorElements.push('frequency');
+        errors.push("Please let us know how often you (will) meet.");
+      }
+      if (!clubState.ageRange) {
+        errorElements.push('ageRange');
+        errors.push("Please let us know what kind of age your audience has.");
+      }
+      if (!clubState.clubSize) {
+        errorElements.push('clubSize');
+        errors.push("Please let us know how big your club is.");
+      }
+      if (!clubState.audienceType) {
+        errorElements.push('audienceType');
+        errors.push("Please let us know what kind of audience your club is for.");
+      }
+      if (!clubState.meetingSubjects) {
+        errorElements.push('meetingSubjects');
+        errors.push("Please let us know what topics and subjects your club covers.");
+      }
+      if (!clubState.pledgeAgreement) {
+        errorElements.push('clubName');
+        errors.push("You must agree to the Club Captain Pledge before you can submit this application.");
+      }
+    }
+
+    this.setState({ errors: errors, errorElements: errorElements });
+    return !errors.length;
+  },
+
+  error: function(field) {
+    if (!this.state.errorElements) return null;
+    var error = this.state.errorElements.indexOf(field) > -1;
+    return error ? "error" : null;
+  },
+
+  renderValidationErrors: function() {
+    if (!this.state.errors || this.state.errors.length === 0) return null;
+    return (
+      <div className="alert alert-danger">
+        <p>Unfortunately, your application has some problems:</p>
+        <ul>
+        {this.state.errors.map(function(text,i) {
+          return <li key={i}>{text}</li>;
+        })}
+        </ul>
+      </div>
+    );
+  },
 
   generateReport() {
     var freq = this.state.frequency;
