@@ -21,6 +21,11 @@ var ClubForm = React.createClass({
     return {
       progress: 0,
       currentStep: 0,
+      titles: [
+        "Apply to Become a Club Captain",
+        "Apply to Become a Club Captain",
+        "Thanks for Applying!"
+      ],
       headings: [
         'Tell us more about you!',
         'About your Club...',
@@ -41,9 +46,9 @@ var ClubForm = React.createClass({
           <section className="intro intro-after-banner">
             <Illustration
               height={""} width={204}
-              src1x="/img/pages/clubs/svg/icon-circle-clubs.svg"
+              src1x="/img/pages/clubs/svg/icon-circle-clubs-form.svg"
               alt="">
-              <h1>Apply to Become a Club Captain</h1>
+              <h1>{this.state.titles[this.state.currentStep]}</h1>
               <h2>{this.state.headings[this.state.currentStep]}</h2>
             </Illustration>
           </section>

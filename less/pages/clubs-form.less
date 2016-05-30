@@ -5,7 +5,16 @@
     width: 80%;
     margin: auto;
 
-    .error {
+    .learn-more {
+      text-align: center;
+      margin: 2em 0;
+    }
+
+    textarea {
+     resize:vertical;
+    }
+
+    .error:not(.choiceGroup) {
       box-shadow: 0 0 3px 1px red;
     }
 
@@ -14,6 +23,7 @@
     }
 
     .pledge {
+      margin-top: 1.5em;
       font-size: 90%;
       a {
         font-size: inherit;
@@ -30,6 +40,13 @@
         display: inline-block;
         &.autowidth {
           width: auto;
+        }
+      }
+
+      &.error {
+        input[type=checkbox],
+        input[type=radio] {
+          box-shadow: 0px 0px 2px 1px #F00;
         }
       }
     }
@@ -65,8 +82,21 @@
         text-align: center;
         position: relative;
 
+        margin: 1em 0 3em 0;
+
         .outer {
+          display: inline-block;
+          height: 10px;
+          background: transparent;
+          border: 1px solid @strokeColor;
+          border-radius: 4px;
           width: ~"calc(30% - 3em)";
+
+          .inner {
+            height: 10px;
+            background: @lineArtBlue;
+            border-radius: 4px;
+          }
         }
       }
     }
@@ -74,5 +104,15 @@
     .alert.alert-danger {
       margin-top: 1em;
     }
+  }
+
+  .alert {
+    background: hsl(0, 56%, 97%);
+    color: #b10000;
+    border: none;
+  }
+
+  .Select.error.is-searchable {
+    border-radius: 4px;
   }
 }

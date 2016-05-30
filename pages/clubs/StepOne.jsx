@@ -175,7 +175,7 @@ var StepOne = React.createClass({
   error: function(field) {
     if (!this.state.errorElements) return null;
     var error = this.state.errorElements.indexOf(field) > -1;
-    return error ? "error" : null;
+    return error ? "error" : '';
   },
 
   renderValidationErrors: function() {
