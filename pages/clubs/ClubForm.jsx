@@ -1,7 +1,9 @@
 var React = require('react');
 var ReactDOM = require('react-dom');
-var fixLocation = require('../../lib/fix-location.js');
 var Illustration = require('../../components/illustration.jsx');
+var LoginLink = require('../../components/login/LoginLink.jsx');
+
+var withTeachAPI = require('../../hoc/with-teach-api.jsx');
 
 
 var ProgressBar = require('./ProgressBar.jsx');
@@ -10,13 +12,6 @@ var StepTwo = require('./StepTwo.jsx');
 var StepThree = require('./StepThree.jsx');
 
 var ClubForm = React.createClass({
-  statics: {
-    pageTitle: "Apply to Become a Club Captain",
-    pageClassName: "clubs-form"
-  },
-  contextTypes: {
-    location: React.PropTypes.object
-  },
   getInitialState: function() {
     return {
       progress: 0,
@@ -30,35 +25,48 @@ var ClubForm = React.createClass({
         'Tell us more about you!',
         'About your Club...',
         'You just took the first step on your journey toward becoming a Mozilla Club Captain. Please check your email for further information.'
-      ]
+      ],
+      loginHeading: 'Sign in to fill in the application form.'
     };
-  },
-  componentWillMount: function() {
-    fixLocation(this.context.location);
   },
   componentDidMount: function() {
     this.updateProgress();
   },
   render: function() {
+    var teachAPI = this.props.teachAPI;
+    var username = teachAPI.getUsername();
+
     return (
-      <div>
+      <div className="clubs-form">
         <div className="inner-container">
           <section className="intro intro-after-banner">
             <Illustration
               height={""} width={204}
               src1x="/img/pages/clubs/svg/icon-circle-clubs-form.svg"
               alt="">
-              <h1>{this.state.titles[this.state.currentStep]}</h1>
-              <h2>{this.state.headings[this.state.currentStep]}</h2>
+              <h1>{ this.state.titles[this.state.currentStep] }</h1>
+              <h2>{ username ? this.state.headings[this.state.currentStep] : this.state.loginHeading }</h2>
             </Illustration>
           </section>
-
-          <StepOne ref="step1" onChange={this.updateProgress} hidden={this.state.currentStep !== 0 }/>
-          <StepTwo ref="step2" onChange={this.updateProgress} hidden={this.state.currentStep !== 1 }/>
-          <StepThree ref="step3" hidden={this.state.currentStep !== 2 } onClick={this.generateReport}/>
-
-          { this.generateButtons() }
+          { username ? this.renderSteps() : this.renderLoginRequest() }
         </div>
+      </div>
+    );
+  },
+
+  renderSteps: function() {
+    return [
+      <StepOne ref="step1" onChange={this.updateProgress} hidden={this.state.currentStep !== 0 }/>,
+      <StepTwo ref="step2" onChange={this.updateProgress} hidden={this.state.currentStep !== 1 }/>,
+      <StepThree ref="step3" hidden={this.state.currentStep !== 2 } onClick={this.generateReport}/>,
+      this.generateButtons()
+    ];
+  },
+
+  renderLoginRequest: function() {
+    return (
+      <div className="login-request">
+        You must be <LoginLink loginBaseURL={this.props.teachAPI.baseURL} callbackURL={this.props.currentPath}>signed in</LoginLink> to apply to become a Club Captain.
       </div>
     );
   },
@@ -120,4 +128,4 @@ var ClubForm = React.createClass({
   }
 });
 
-module.exports = ClubForm;
+module.exports = withTeachAPI(ClubForm);

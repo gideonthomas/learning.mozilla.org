@@ -182,7 +182,7 @@ var StepTwo = React.createClass({
     </div>;
   },
 
-  updateIntent: function(evt) { this.setStateAsChange({ intent: evt.target.value }, true); },
+  updateIntent: function(evt) { this.setStateAsChange({ intent: evt.target.value, errors: []}, true); },
   updateClubName: function(evt) { this.setStateAsChange({ clubName: evt.target.value }); },
   updateMeetingVenue: function(evt) { this.setStateAsChange({ meetingVenue: evt.target.value }); },
 

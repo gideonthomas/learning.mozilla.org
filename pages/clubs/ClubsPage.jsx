@@ -17,6 +17,8 @@ var ModalRemoveYourClub = require('../../components/modal-clubs-remove.jsx');
 var Illustration = require('../../components/illustration.jsx');
 var ImageTag = require('../../components/imagetag.jsx');
 
+var ClubForm = require('./ClubForm.jsx');
+
 var Intro = (
   <section className="intro intro-after-banner">
     <Illustration
@@ -170,7 +172,7 @@ var ApplyCallout = React.createClass({
         <div className="apply-callout text-center">
           <div className="vertical-divider"></div>
           <h3 className="text-center">To get matched with a Regional Coordinator, please apply to be a Mozilla Club Captain.</h3>
-          <Link className="btn" to="clubs/apply">Apply to be a Club Captain</Link>
+          <span className="btn" onClick={this.props.onClick}>Apply to be a Club Captain</span>
           <p className="check-out-resources">If you’d like to get started on your own, check out these <a href="http://mozilla.github.io/learning-networks/clubs/">resources</a>.</p>
           <div className="alert alert-warning text-left center-block">
             <strong>Please note: </strong><span>Our first cohort of Regional Coordinators is in full swing right now, so you’ll be added to our waiting list. We’ll match you with a Regional Coordinator as soon as we can.</span>
@@ -192,6 +194,11 @@ var ClubsPage = React.createClass({
   },
   contextTypes: {
     location: React.PropTypes.object
+  },
+  getInitialState: function() {
+    return {
+      showApplication: false
+    };
   },
   componentWillMount: function() {
     fixLocation(this.context.location);
@@ -232,19 +239,25 @@ var ClubsPage = React.createClass({
     var teachAPI = this.props.teachAPI;
     var clubs = teachAPI.getClubs();
     var username = teachAPI.getUsername();
+
+    if (this.state.showApplication) {
+      return <ClubForm/>;
+    }
+
     return (
       <div>
         <HeroUnit>
           <h1>Mozilla Clubs</h1>
           <h2>Local groups teaching the Web around the world</h2>
-          <div><Link className="btn" to="clubs/apply">Apply to be a Club Captain</Link></div>
+          <div><span className="btn" onClick={this.showApplication}>Apply to be a Club Captain</span></div>
         </HeroUnit>
         <div className="inner-container">
           {Intro}
           {WhyOrganize}
           {MozillaClubLookLike}
           {ClubCaptainPledge}
-          <ApplyCallout showAddYourClubModal={this.showAddYourClubModal} />
+
+          <ApplyCallout onClick={this.showApplication} showAddYourClubModal={this.showAddYourClubModal} />
 
           <section>
             <h2>Where in the World are Mozilla Clubs?</h2>
@@ -286,6 +299,12 @@ var ClubsPage = React.createClass({
         </div>
       </div>
     );
+  },
+
+  showApplication: function() {
+    this.setState({
+      showApplication: true
+    });
   }
 });
 
