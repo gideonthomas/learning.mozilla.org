@@ -183,12 +183,12 @@ var ApplyCallout = React.createClass({
 
 var ClubsPage = React.createClass({
   statics: {
+    pageTitle: "Clubs",
+    pageClassName: "clubs",
     teachAPIEvents: {
       'clubs:change': 'forceUpdate',
       'username:change': 'forceUpdate'
-    },
-    pageTitle: "Clubs",
-    pageClassName: "clubs"
+    }
   },
   contextTypes: {
     location: React.PropTypes.object
